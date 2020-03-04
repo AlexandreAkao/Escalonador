@@ -23,6 +23,16 @@ int Process::get_process_id() {
 	return process_id;
 }
 
+void Process::set_state(States state)
+{
+	this->state = state; 
+}
+
+void Process::set_remaining_time(int time)
+{
+	this->remaining_time = time;
+}
+
 
 
 

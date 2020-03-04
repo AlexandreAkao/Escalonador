@@ -138,11 +138,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Kernel.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="Simulador.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Kernel.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="Scheduler.h" />
   </ItemGroup>

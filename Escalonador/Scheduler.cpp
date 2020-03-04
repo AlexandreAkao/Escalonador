@@ -1,7 +1,4 @@
-
 #include "Scheduler.h"
-
-using namespace std;
 
 
 void Scheduler::insert_process(Process* newProcess) {
@@ -13,32 +10,62 @@ void Scheduler::insert_process(Process* newProcess) {
 		}
 	}
 
+void Scheduler::process_core(int core_position)
+{
+	while (true)
+	{
+		if (this->cores[core_position] == NULL) {
+			this->someEmpty = true;
+		}
+		else
+		{
+			Process* process = this->cores[core_position];
+
+			if (this->algorithm == Scheduler::Algorithms::round_robin) {
+				this_thread::sleep_for(chrono::seconds(this->quantum));
+				process->set_remaining_time(process->get_remaining_time() - quantum);
+			}else{
+				this_thread::sleep_for(chrono::seconds(process->get_remaining_time()));
+				process->set_remaining_time(0);
+			}
+
+			deschedule_process(core_position);
+		}
+	}
+}
+
 void Scheduler::run()
 {
-}
+	thread algorithm_thread;
+	vector<thread> cores_thread;
+	if (this->algorithm == Scheduler::Algorithms::fifo) {
+		algorithm_thread= thread(&Scheduler::fifo_scheduler, this);
 
-Scheduler::Scheduler(Algorithms algotithm,int cores,list<Process*> ready_queue) {
-	this->algorithm = algotithm;
-	this->ready_queue = ready_queue;
-
-	if (algotithm == Algorithms::sjf) {
-		this->ready_queue.sort([](Process* lhs, Process* rhs) {return lhs->get_remaining_time() < rhs->get_remaining_time(); });
 	}
+	else if (this->algorithm == Scheduler::Algorithms::sjf) {
+	}
+	else{
+	
+	}
+	for (int i = 0; i < qtd_cores; i++)
+		cores_thread.push_back(thread(&Scheduler::process_core,this,i));
+	for (thread& t : cores_thread)
+		t.join();
 
-	qtd_cores = cores;	
+	algorithm_thread.join();
+
+
 }
 
-Scheduler::Scheduler(Algorithms algotithm, int cores, list<Process*> ready_queue,int quantum) {
+Scheduler::Scheduler(Algorithms algotithm, int cores, int quantum) {
+	this->algorithm = algotithm;
 	this->quantum = quantum;
-	this->algorithm = algotithm;
-	this->ready_queue = ready_queue;
-
-	if (algotithm == Algorithms::sjf) {
-		this->ready_queue.sort([](Process* lhs, Process* rhs) {return lhs->get_remaining_time() < rhs->get_remaining_time(); });
-	}
-
 	qtd_cores = cores;
+	this->someEmpty = true;
+	for (int i = 0; i < cores; i++)
+		this->cores.push_back(NULL);
 }
+
 
 void Scheduler::mostrar_queue() {
 		for (Process* p : ready_queue) {
@@ -66,22 +93,65 @@ void Scheduler::insertOnSort(Process* new_process) {
 
 void Scheduler::fifo_scheduler()
 {
+	while (true)
+	{
+		if (someEmpty) {
+			if (ready_queue.size() > 0) {
+				schedule_process(ready_queue.front());
+				ready_queue.pop_front();
+			}
+
+		}
+	}
+
 }
 
 void Scheduler::shortest_job_first()
 {
+	while (true)
+	{
+		if (someEmpty) {
+			if (ready_queue.size() > 0) {
+				schedule_process(ready_queue.front());
+				ready_queue.pop_front();
+			}
+
+		}
+	}
 }
 
 void Scheduler::round_robin()
 {
+
 }
 
-void Scheduler::schedule_process()
+void Scheduler::schedule_process(Process* process)
 {
+	for (Process* proc : this->cores) {
+		if (proc == NULL) {
+			proc = process;
+			proc->set_state(Process::States::running);
+			break;
+		}
+	}
 }
 
-void Scheduler::deschedule_process()
-{
+void Scheduler::deschedule_process(int position)
+{	
+	Process* process = this->cores[position];
+	this->cores[position] = NULL;
+
+	if (process->get_remaining_time() > 0) {
+		process->set_state(Process::States::ready);
+		insert_process(process);
+	}
+	else {
+		process->set_state(Process::States::terminated);
+	}
+				
+	someEmpty = true;
+		
+		
 }
 
 
