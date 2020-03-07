@@ -3,6 +3,8 @@
 Kernel::Kernel(int quantum, int processor_cores_number, Scheduler::Algorithms algorithm)
 {
 	this->scheduler = new Scheduler(algorithm,processor_cores_number,quantum);
+	this->cpu = new CentralPu(scheduler,processor_cores_number);
+	
 }
 
 Kernel::~Kernel()

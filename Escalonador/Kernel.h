@@ -4,10 +4,10 @@
 #include <time.h>
 
 #include "Process.h"
-#include "Scheduler.h"
+#include "Scheduler.hpp"
+#include "CentralPu.hpp"
 
 
-#pragma once
 #ifndef Kernel_H
 #define Kernel_H
 class Kernel
@@ -25,6 +25,7 @@ class Kernel
 private:
 	list<Process*> process_control_table;
 	Scheduler* scheduler;
+	CentralPu* cpu;
 };
 #endif
 

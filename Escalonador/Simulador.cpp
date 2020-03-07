@@ -4,7 +4,7 @@
 #include <thread> 
 
 #include "Process.h"
-#include "Scheduler.h"
+#include "Scheduler.hpp"
 #include "Kernel.h"
 
 using namespace std;

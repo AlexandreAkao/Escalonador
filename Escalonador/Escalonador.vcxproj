@@ -138,15 +138,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core.hpp" />
     <ClCompile Include="Kernel.cpp" />
     <ClCompile Include="Process.cpp" />
-    <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="Simulador.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CentralPu.hpp" />
     <ClInclude Include="Kernel.h" />
     <ClInclude Include="Process.h" />
-    <ClInclude Include="Scheduler.h" />
+    <ClInclude Include="Scheduler.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
