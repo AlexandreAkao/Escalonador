@@ -1,16 +1,16 @@
-
+#include "Process.h"
 #pragma once
-#include "Scheduler.hpp"
 
-#ifndef Core_H
-#define Core_H
+
 class Core
 {
+private:
+	Process* process;
+	int position;
 public:
-	Core(Process* process,int position, Scheduler* scheduler) {
+	Core(Process* process,int position) {
 		this->process = process;
 		this->position = position;
-		this->scheduler = scheduler;
 	}
 
 	Process* getProcess() {
@@ -26,12 +26,6 @@ public:
 	}
 
 	bool coreIsEmpty() {
-		return (process == NULL)? true: false;
+		return (process == nullptr);
 	}
-
-private:
-	Process* process;
-	int position;
-	Scheduler* scheduler;
 };
-#endif

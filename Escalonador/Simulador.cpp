@@ -6,7 +6,6 @@
 #include "Process.h"
 #include "Scheduler.hpp"
 #include "Kernel.h"
-
 using namespace std;
 
 struct processAux {
@@ -34,8 +33,7 @@ processAux create_random_process() {
 	newProcess.id = idTraker;
 	idTraker++;
 	newProcess.lifeTime = rand() % 20 + 1;
-	int key = rand() % 3;
-	newProcess.state = (key == 0) ? Process::States::ready : (key == 1) ? Process::States::running : Process::States::terminated;
+	newProcess.state = Process::States::ready;
 
 	return newProcess;
 

@@ -144,7 +144,7 @@
     <ClCompile Include="Simulador.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CentralPu.hpp" />
+    <ClInclude Include="CPU.hpp" />
     <ClInclude Include="Kernel.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="Scheduler.hpp" />

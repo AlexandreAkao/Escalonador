@@ -4,12 +4,8 @@
 #include <thread> 
 
 #include "Process.h"
-#include "CentralPu.hpp"
-
+#include "CPU.hpp"
 #pragma once
-
-#ifndef Scheduler_H
-#define Scheduler_H
 class Scheduler
 {
 public:
@@ -18,7 +14,8 @@ public:
 		fifo, sjf, round_robin
 	};
 
-	Scheduler(Algorithms algotithm, int cores, int quantum) {
+	Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu) {
+		this->cpu = cpu;
 		this->algorithm = algotithm;
 		this->quantum = quantum;
 		qtd_cores = cores;
@@ -26,7 +23,6 @@ public:
 		for (int i = 0; i < cores; i++)
 			this->cores.push_back(NULL);
 	}
-
 
 	~Scheduler();
 	
@@ -38,20 +34,25 @@ public:
 			ready_queue.push_back(newProcess);
 		}
 	}
+
 	void process_core(int core_position)
 	{
 		while (true)
 		{
-			if (this->cores[core_position] == NULL) {
-				this->someEmpty = true;
+			if (cpu->coreIsEmpty(core_position)) {
+				schedule_process(core_position);
 			}
 			else
 			{
-				Process* process = this->cores[core_position];
+				Process* process = getCpuCore(core_position);
 
-				if (this->algorithm == Scheduler::Algorithms::round_robin) {
-					this_thread::sleep_for(chrono::seconds(this->quantum));
-					process->set_remaining_time(process->get_remaining_time() - quantum);
+				if (this->algorithm == Algorithms::round_robin) {
+					for (int i = 0; i < quantum; i++) {
+						this_thread::sleep_for(chrono::seconds(1));
+						if (process->decrease_time(1) == 0)
+							break;
+					}
+				
 				}
 				else {
 					this_thread::sleep_for(chrono::seconds(process->get_remaining_time()));
@@ -65,43 +66,29 @@ public:
 
 	void run()
 	{
-		thread algorithm_thread;
 		vector<thread> cores_thread;
-		if (this->algorithm == Scheduler::Algorithms::fifo) {
-			algorithm_thread = thread(&Scheduler::fifo_scheduler, this);
 
-		}
-		else if (this->algorithm == Scheduler::Algorithms::sjf) {
-		}
-		else {
-
-		}
 		for (int i = 0; i < qtd_cores; i++)
 			cores_thread.push_back(thread(&Scheduler::process_core, this, i));
 		for (thread& t : cores_thread)
 			t.join();
 
-		algorithm_thread.join();
-
-
 	}
-
-
 
 	void mostrar_queue() {
 		for (Process* p : ready_queue) {
 			cout << p->get_process_id() << endl;
 		}
 	}
-	list<Process*> get_queue();
 
+	list<Process*> get_queue();
 
 private:
 	int quantum;
 	vector<Process*> cores;
 	list<Process*> ready_queue;
 	Algorithms algorithm;
-	//CentralPu* cpu;
+	CPU* cpu;
 	int qtd_cores;
 	bool someEmpty;
 
@@ -122,45 +109,24 @@ private:
 
 
 	}
-	void fifo_scheduler()
-	{
-		while (true)
-		{
-			if (someEmpty) {
-				if (ready_queue.size() > 0) {
-					schedule_process(ready_queue.front());
-					ready_queue.pop_front();
-				}
 
-			}
-		}
-
+	void setCpuCore(int position, Process* process) {
+		this->cpu->getCores()[position]->setProcess(process);
 	}
-	void shortest_job_first()
-	{
-		while (true)
-		{
-			if (someEmpty) {
-				if (ready_queue.size() > 0) {
-					schedule_process(ready_queue.front());
-					ready_queue.pop_front();
-				}
 
-			}
-		}
+
+	Process* getCpuCore(int position) {
+		return this->cpu->getCores()[position]->getProcess();
 	}
-	void round_robin();
 	
-	void schedule_process(Process* process)
+	void schedule_process(int position)
 	{
-		for (Process* proc : this->cores) {
-			if (proc == NULL) {
-				proc = process;
-				proc->set_state(Process::States::running);
-				break;
-			}
-		}
+		Process* aux = this->ready_queue.front();
+		aux->set_state(Process::States::running);
+		setCpuCore(position, aux);
+		this->ready_queue.pop_front();
 	}
+
 	void deschedule_process(int position)
 	{
 		Process* process = this->cores[position];
@@ -179,4 +145,3 @@ private:
 
 	}
 };
-#endif

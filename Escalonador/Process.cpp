@@ -33,6 +33,11 @@ void Process::set_remaining_time(int time)
 	this->remaining_time = time;
 }
 
+int Process::decrease_time(int time) {
+	this->remaining_time -= time;
+	return time;
+}
+
 
 
 

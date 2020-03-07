@@ -22,6 +22,8 @@ public:
 	void set_state(States state);
 	void set_remaining_time(int time);
 
+	int decrease_time(int time);
+
 private:
 	int process_id;
 	int total_time;
