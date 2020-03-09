@@ -19,6 +19,8 @@ public:
 
 	int get_process_id();
 
+	States getState();
+
 	void set_state(States state);
 	void set_remaining_time(int time);
 

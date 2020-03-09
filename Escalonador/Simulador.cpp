@@ -2,80 +2,117 @@
 #include <iostream> 
 #include <time.h>
 #include <thread> 
-
+#include "MainScreen.h"
 #include "Process.h"
 #include "Scheduler.hpp"
 #include "Kernel.h"
+
+
+using namespace System;
+using namespace System::Windows::Forms;
 using namespace std;
 
-struct processAux {
-	int id;
-	int lifeTime;
-	Process::States state;
-};
+class Simulador{
+private:
+	int quantum, processor_cores_number, nmbProcess;
+	Scheduler::Algorithms alg;
 
-int idTraker = 0;
-Kernel* kernel = NULL;
+public:
+	int idTraker = 0;
+	Kernel* kernel = NULL;
+
+	Simulador(int quantum, int processor_cores_number,int nmbProcess, Scheduler::Algorithms alg) {
+		this->quantum = quantum;
+		this->processor_cores_number = processor_cores_number;
+		this->nmbProcess = nmbProcess;
+		this->alg = alg;
+
+	}
+
+	struct processAux {
+		int id;
+		int lifeTime;
+		Process::States state;
+	};
+
+	void start() {
+		Application::EnableVisualStyles();
+		Application::SetCompatibleTextRenderingDefault(false);
+		Escalonador::MainScreen form;
+		Application::Run(% form);
+
+		list<processAux> lista_process = batch_process_init(nmbProcess);
+		thread kernelThread(&Simulador::run, this, lista_process);
+		thread addingProcessThread(&Simulador::addNewProcess, this);
+
+		kernelThread.join();
+		addingProcessThread.join();
+	}
+
+	void run(list<processAux> lista_process) {
 
 
-void run(int quantum, int processor_cores_number,Scheduler::Algorithms alg,list<processAux> lista_process) {
-	kernel = new Kernel(quantum,processor_cores_number,alg);
-	for (processAux aux : lista_process)
-		kernel->create_process(aux.id, aux.lifeTime, aux.state);
+		kernel = new Kernel(quantum, processor_cores_number, alg);
+		for (processAux aux : lista_process)
+			kernel->create_process(aux.id, aux.lifeTime, aux.state);
 
-	kernel->run();
+		kernel->run();
 
-}
+	}
+	
+	processAux create_random_process() {
 
-processAux create_random_process() {
+		processAux newProcess;
+		newProcess.id = idTraker;
+		idTraker++;
+		newProcess.lifeTime = rand() % 20 + 1;
+		newProcess.state = Process::States::ready;
 
-	processAux newProcess;
-	newProcess.id = idTraker;
-	idTraker++;
-	newProcess.lifeTime = rand() % 20 + 1;
-	newProcess.state = Process::States::ready;
+		return newProcess;
 
-	return newProcess;
+	}
 
-}
+	void addNewProcess() {
 
-void addNewProcess() {
-	while (true)
-	{	
-		if (kernel != NULL) {
-			this_thread::sleep_for(chrono::seconds(2));
+		while (true)
+		{
+			if (kernel != NULL) {
+				this_thread::sleep_for(chrono::seconds(2));
 
-			processAux newProcess = create_random_process();
-			kernel->create_process(newProcess.id, newProcess.lifeTime, newProcess.state);
+				processAux newProcess = create_random_process();
+				//form.changeLabels(new Process(newProcess.id, newProcess.lifeTime, newProcess.state));
 
-			/*for (Process* proc : kernel->get_process_control_table())
-				cout << proc->get_process_id() << " " << proc->get_remaining_time() << endl;*/
+				kernel->create_process(newProcess.id, newProcess.lifeTime, newProcess.state);
+
+				/*for (Process* proc : kernel->get_process_control_table())
+					cout << proc->get_process_id() << " " << proc->get_remaining_time() << endl;*/
+			}
 		}
 	}
-}
 
-list<processAux> batch_process_init(int nmbProcess) {
-	list<processAux> processInitList;
-	for (int i = 0; i < nmbProcess; i++)
-		processInitList.push_back(create_random_process());
-	return processInitList;
-}
+	list<processAux> batch_process_init(int nmbProcess) {
+		list<processAux> processInitList;
+		for (int i = 0; i < nmbProcess; i++)
+			processInitList.push_back(create_random_process());
+		return processInitList;
+	}
+
+
+};
+
+
+
 
 
 int main(){
-
 	srand(time(NULL));
 
 	Scheduler::Algorithms alg = Scheduler::Algorithms::fifo;
 	int quantum = 3;
 	int processor_cores_number = 2;
 	int nmbProcess = 3;
-	list<processAux> lista_process = batch_process_init(nmbProcess);
-	thread kernel_thread(run,quantum, processor_cores_number, alg, lista_process);
-	thread addingProcess_thread(addNewProcess);
-
-	kernel_thread.join();
-	addingProcess_thread.join();
+	Simulador* simulador = new Simulador(quantum,processor_cores_number,nmbProcess,alg);
+	simulador->start();
 	//list<Process*> a;
 	//a.push_back(new Process(1,3, Process::States::ready));
 	//a.push_back(new Process(2, 2, Process::States::ready));

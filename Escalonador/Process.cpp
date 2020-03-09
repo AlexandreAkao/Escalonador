@@ -23,6 +23,11 @@ int Process::get_process_id() {
 	return process_id;
 }
 
+Process::States Process::getState()
+{
+	return this->state;
+}
+
 void Process::set_state(States state)
 {
 	this->state = state; 
