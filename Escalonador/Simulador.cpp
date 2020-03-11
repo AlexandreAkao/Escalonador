@@ -2,16 +2,17 @@
 #include <iostream> 
 #include <time.h>
 #include <thread> 
-#include "MainScreen.h"
+//#include "MainScreen.h"
+//#include "MainScreen.h"
 #include "Process.h"
 #include "Scheduler.hpp"
 #include "Kernel.h"
 
 
-using namespace System;
-using namespace System::Windows::Forms;
-using namespace std;
+//using namespace System;
+//using namespace System::Windows::Forms;
 
+using namespace std;
 class Simulador{
 private:
 	int quantum, processor_cores_number, nmbProcess;
@@ -36,10 +37,8 @@ public:
 	};
 
 	void start() {
-		Application::EnableVisualStyles();
-		Application::SetCompatibleTextRenderingDefault(false);
-		Escalonador::MainScreen form;
-		Application::Run(% form);
+		/*Application::EnableVisualStyles();
+		Application::SetCompatibleTextRenderingDefault(false);*/
 
 		list<processAux> lista_process = batch_process_init(nmbProcess);
 		thread kernelThread(&Simulador::run, this, lista_process);
@@ -51,11 +50,9 @@ public:
 
 	void run(list<processAux> lista_process) {
 
-
 		kernel = new Kernel(quantum, processor_cores_number, alg);
 		for (processAux aux : lista_process)
 			kernel->create_process(aux.id, aux.lifeTime, aux.state);
-
 		kernel->run();
 
 	}
@@ -73,19 +70,18 @@ public:
 	}
 
 	void addNewProcess() {
+		cout << "addNewProcess" << endl;
+
+
 
 		while (true)
 		{
 			if (kernel != NULL) {
 				this_thread::sleep_for(chrono::seconds(2));
-
 				processAux newProcess = create_random_process();
+
 				//form.changeLabels(new Process(newProcess.id, newProcess.lifeTime, newProcess.state));
-
 				kernel->create_process(newProcess.id, newProcess.lifeTime, newProcess.state);
-
-				/*for (Process* proc : kernel->get_process_control_table())
-					cout << proc->get_process_id() << " " << proc->get_remaining_time() << endl;*/
 			}
 		}
 	}
@@ -101,18 +97,29 @@ public:
 };
 
 
-
-
+//[STAThread]
 
 int main(){
 	srand(time(NULL));
 
+	cout << "aaaaaaaa" << endl;
 	Scheduler::Algorithms alg = Scheduler::Algorithms::fifo;
+
+
 	int quantum = 3;
 	int processor_cores_number = 2;
 	int nmbProcess = 3;
 	Simulador* simulador = new Simulador(quantum,processor_cores_number,nmbProcess,alg);
 	simulador->start();
+	//thread simuladorThread(&Simulador::start,simulador);
+
+	//cout << "fasdfasfas" << endl;
+
+	//Escalonador::MainScreen form;
+	//Application::Run(% form);
+
+	//simuladorThread.join();
+
 	//list<Process*> a;
 	//a.push_back(new Process(1,3, Process::States::ready));
 	//a.push_back(new Process(2, 2, Process::States::ready));

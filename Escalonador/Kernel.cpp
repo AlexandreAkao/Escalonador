@@ -24,7 +24,9 @@ list<Process*> Kernel::get_process_control_table()
 
 void Kernel::create_process(int process_id, int total_time, Process::States state)
 {
-	this->process_control_table.push_back(new Process(process_id,total_time,state));
+	Process* aux = new Process(process_id, total_time, state);
+	this->process_control_table.push_back(aux);
+	this->run_process(aux);
 }
 
 void Kernel::kill_process(Process* process){

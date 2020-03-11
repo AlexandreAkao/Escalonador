@@ -26,6 +26,6 @@ public:
 	}
 
 	bool coreIsEmpty() {
-		return (process == nullptr);
+		return (process == NULL);
 	}
 };

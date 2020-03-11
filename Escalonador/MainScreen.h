@@ -25,7 +25,7 @@ namespace Escalonador {
 		}
 
 		void changeLabels(Process* process);
-
+		//Simulador* sim = new Simulador(1,3,4,Scheduler::Algorithms::fifo);
 	protected:
 		/// <summary>
 		/// Clean up any resources being used.

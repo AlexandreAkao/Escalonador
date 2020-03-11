@@ -2,7 +2,6 @@
 #include <iostream> 
 #include <vector>
 #include <thread> 
-
 #include "Process.h"
 #include "CPU.hpp"
 #pragma once
@@ -20,8 +19,6 @@ public:
 		this->quantum = quantum;
 		qtd_cores = cores;
 		this->someEmpty = true;
-		for (int i = 0; i < cores; i++)
-			this->cores.push_back(NULL);
 	}
 
 	~Scheduler();
@@ -45,20 +42,24 @@ public:
 			else
 			{
 				Process* process = getCpuCore(core_position);
-
-				if (this->algorithm == Algorithms::round_robin) {
-					for (int i = 0; i < quantum; i++) {
-						this_thread::sleep_for(chrono::seconds(1));
-						if (process->decrease_time(1) == 0)
-							break;
-					}
 				
+				int tempoParaSerProcessado = 0;
+				if (this->algorithm == Algorithms::round_robin) {
+					tempoParaSerProcessado = quantum;
 				}
 				else {
-					this_thread::sleep_for(chrono::seconds(process->get_remaining_time()));
-					process->set_remaining_time(0);
+					tempoParaSerProcessado = process->get_remaining_time();
 				}
+				
+				for (int i = 0; i < tempoParaSerProcessado; i++) {
+					process->printProcess();
+					this_thread::sleep_for(chrono::seconds(1));
+					cout << process->get_process_id() <<" : "<<process->get_remaining_time() << endl;
 
+					if (process->decrease_time(1) == 0)
+						break;
+				}
+		
 				deschedule_process(core_position);
 			}
 		}
@@ -85,7 +86,6 @@ public:
 
 private:
 	int quantum;
-	vector<Process*> cores;
 	list<Process*> ready_queue;
 	Algorithms algorithm;
 	CPU* cpu;
@@ -114,7 +114,6 @@ private:
 		this->cpu->getCores()[position]->setProcess(process);
 	}
 
-
 	Process* getCpuCore(int position) {
 		return this->cpu->getCores()[position]->getProcess();
 	}
@@ -129,8 +128,15 @@ private:
 
 	void deschedule_process(int position)
 	{
-		Process* process = this->cores[position];
-		this->cores[position] = NULL;
+		Process* process = cpu->getCore(position)->getProcess();
+		cpu->getCore(position)->setProcess(NULL);
+		//std::vector<Process* >::iterator it;
+		
+		//this->cores.erase(it + position);
+
+		//it = cores.insert(it + position, NULL);
+
+		//this->cores.erase;
 
 		if (process->get_remaining_time() > 0) {
 			process->set_state(Process::States::ready);
@@ -141,7 +147,6 @@ private:
 		}
 
 		someEmpty = true;
-
 
 	}
 };

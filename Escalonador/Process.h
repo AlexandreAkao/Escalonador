@@ -1,6 +1,8 @@
 #pragma once
 #ifndef Process_H
 #define Process_H
+#include <iostream> 
+
 using namespace std;
 class Process
 {
@@ -12,6 +14,8 @@ public:
 
 	Process(int process_id, int total_time, States state);
 	~Process();
+
+	void printProcess();
 
 	int get_remaining_time();
 
