@@ -21,7 +21,8 @@ public:
 		cout << "R:";
 		for (Core* c : cores) {
 			if (c->getProcess() != NULL) {
-				cout << " [" << c->getProcess()->get_process_id() << " , " << c->getProcess()->get_remaining_time() << " , " << c->getProcess()->getStatusAsString() << "] , ";
+				cout << " [" << c->getProcess()->get_process_id() << " , " 
+					<< c->getProcess()->get_remaining_time() << " , " << c->getProcess()->getStatusAsString() << "] , ";
 			}
 			else {
 				cout << " [ 0 ,0 , 0] , ";

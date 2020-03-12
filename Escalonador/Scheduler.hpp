@@ -80,11 +80,17 @@ public:
 	}
 
 	void printReadQueue() {
-		cout << "A: ";
-		for (Process* p : ready_queue) {
-			cout << "[ " << p->get_remaining_time() << " , " << p->get_total_time() << "] , ";
+		if (printing == false) {
+			printing = true;
+			cout << "A: ";
+			for (Process* p : ready_queue) {
+				cout << "[ " << p->get_remaining_time() << " , " << p->get_total_time() << "] , ";
+			}
+			cout << endl;
+			printing = false;
+
 		}
-		cout << endl;
+
 	}
 
 	void mostrar_queue() {
@@ -102,6 +108,7 @@ private:
 	CPU* cpu;
 	int qtd_cores;
 	bool someEmpty;
+	bool printing = false;
 
 	void insertOnSort(Process* new_process) {
 		int key = 0;

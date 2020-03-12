@@ -105,7 +105,7 @@ int main(){
 
 	int quantum = 3;
 	int processor_cores_number = 3;
-	int nmbProcess = 3;
+	int nmbProcess = 2;
 	Simulador* simulador = new Simulador(quantum,processor_cores_number,nmbProcess,alg);
 	simulador->start();
 	//thread simuladorThread(&Simulador::start,simulador);
