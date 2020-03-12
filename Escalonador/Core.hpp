@@ -25,6 +25,7 @@ public:
 		this->process = process;
 	}
 
+
 	bool coreIsEmpty() {
 		return (process == NULL);
 	}

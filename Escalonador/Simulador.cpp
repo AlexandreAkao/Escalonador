@@ -9,8 +9,6 @@
 #include "Kernel.h"
 
 
-//using namespace System;
-//using namespace System::Windows::Forms;
 
 using namespace std;
 class Simulador{
@@ -102,12 +100,11 @@ public:
 int main(){
 	srand(time(NULL));
 
-	cout << "aaaaaaaa" << endl;
-	Scheduler::Algorithms alg = Scheduler::Algorithms::fifo;
+	Scheduler::Algorithms alg = Scheduler::Algorithms::round_robin;
 
 
 	int quantum = 3;
-	int processor_cores_number = 2;
+	int processor_cores_number = 3;
 	int nmbProcess = 3;
 	Simulador* simulador = new Simulador(quantum,processor_cores_number,nmbProcess,alg);
 	simulador->start();

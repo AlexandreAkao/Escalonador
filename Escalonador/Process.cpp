@@ -13,6 +13,7 @@ Process::~Process() {}
 
 void Process::printProcess() {
 	cout << "id: " << this->process_id << endl;
+	cout << "tempo inicial: " << this->total_time<< endl;
 	cout << "tempo remanecente: " << this->remaining_time << endl;
 	if (this->state == Process::States::running)
 		cout << "Status : running" << endl;
@@ -21,6 +22,15 @@ void Process::printProcess() {
 	else
 		cout << "Status : ready" << endl;
 
+}
+
+string Process::getStatusAsString() {
+	if (this->state == Process::States::running)
+		return "running";
+	else if (this->state == Process::States::terminated)
+		return "terminatated";
+	else
+		return "ready";
 }
 
 int Process::get_remaining_time() {

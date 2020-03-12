@@ -17,6 +17,8 @@ public:
 
 	void printProcess();
 
+	string getStatusAsString();
+
 	int get_remaining_time();
 
 	int get_total_time();

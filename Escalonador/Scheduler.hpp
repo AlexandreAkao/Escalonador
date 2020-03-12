@@ -41,6 +41,10 @@ public:
 			}
 			else
 			{
+				cout << "------------------------------" << endl;
+				cpu->printProcessos();
+				printReadQueue();
+
 				Process* process = getCpuCore(core_position);
 				
 				int tempoParaSerProcessado = 0;
@@ -52,9 +56,8 @@ public:
 				}
 				
 				for (int i = 0; i < tempoParaSerProcessado; i++) {
-					process->printProcess();
+
 					this_thread::sleep_for(chrono::seconds(1));
-					cout << process->get_process_id() <<" : "<<process->get_remaining_time() << endl;
 
 					if (process->decrease_time(1) == 0)
 						break;
@@ -74,6 +77,14 @@ public:
 		for (thread& t : cores_thread)
 			t.join();
 
+	}
+
+	void printReadQueue() {
+		cout << "A: ";
+		for (Process* p : ready_queue) {
+			cout << "[ " << p->get_remaining_time() << " , " << p->get_total_time() << "] , ";
+		}
+		cout << endl;
 	}
 
 	void mostrar_queue() {
@@ -130,13 +141,7 @@ private:
 	{
 		Process* process = cpu->getCore(position)->getProcess();
 		cpu->getCore(position)->setProcess(NULL);
-		//std::vector<Process* >::iterator it;
-		
-		//this->cores.erase(it + position);
 
-		//it = cores.insert(it + position, NULL);
-
-		//this->cores.erase;
 
 		if (process->get_remaining_time() > 0) {
 			process->set_state(Process::States::ready);
