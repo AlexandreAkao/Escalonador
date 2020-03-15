@@ -18,7 +18,6 @@ public:
 		this->algorithm = algotithm;
 		this->quantum = quantum;
 		qtd_cores = cores;
-		this->someEmpty = true;
 	}
 
 	~Scheduler();
@@ -37,7 +36,11 @@ public:
 		while (true)
 		{
 			if (cpu->coreIsEmpty(core_position)) {
-				schedule_process(core_position);
+				if (ready_queue.size() > 0) {
+
+					schedule_process(core_position);
+
+				}
 			}
 			else
 			{
@@ -83,8 +86,10 @@ public:
 		if (printing == false) {
 			printing = true;
 			cout << "A: ";
-			for (Process* p : ready_queue) {
-				cout << "[ " << p->get_remaining_time() << " , " << p->get_total_time() << "] , ";
+			if (ready_queue.size() > 0 ){
+				for (Process* p : ready_queue) {
+					cout << "[ " << p->get_remaining_time() << " , " << p->get_total_time() << "] , ";
+				}
 			}
 			cout << endl;
 			printing = false;
@@ -107,7 +112,6 @@ private:
 	Algorithms algorithm;
 	CPU* cpu;
 	int qtd_cores;
-	bool someEmpty;
 	bool printing = false;
 
 	void insertOnSort(Process* new_process) {
@@ -137,16 +141,21 @@ private:
 	}
 	
 	void schedule_process(int position)
-	{
-		Process* aux = this->ready_queue.front();
-		aux->set_state(Process::States::running);
-		setCpuCore(position, aux);
-		this->ready_queue.pop_front();
+	{	
+		if (ready_queue.size() > 0) {
+
+			Process* aux = this->ready_queue.front();
+			this->ready_queue.pop_front();
+
+			aux->set_state(Process::States::running);
+			setCpuCore(position, aux);
+		}
+	
 	}
 
 	void deschedule_process(int position)
 	{
-		Process* process = cpu->getCore(position)->getProcess();
+		Process* process = getCpuCore(position);
 		cpu->getCore(position)->setProcess(NULL);
 
 
@@ -157,8 +166,6 @@ private:
 		else {
 			process->set_state(Process::States::terminated);
 		}
-
-		someEmpty = true;
 
 	}
 };
