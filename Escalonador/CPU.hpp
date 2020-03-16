@@ -9,10 +9,10 @@ private:
 	int qtd_cores;
 
 public:
-	CPU(int qtd_cores)
+	CPU(int qtd_cores,int quantum)
 	{
 		for (int i = 0; i < qtd_cores; i++)
-			this->cores.push_back(new Core(NULL, i));
+			this->cores.push_back(new Core(NULL, i,quantum));
 
 		this->qtd_cores = qtd_cores;
 	}

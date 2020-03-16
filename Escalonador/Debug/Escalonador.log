@@ -1,6 +1,4 @@
-﻿  Kernel.cpp
-  Simulador.cpp
+﻿  Simulador.cpp
 D:\Codes\c++\Escalonador\Escalonador\Simulador.cpp(100,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Generating Code...
   Kernel.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
   Escalonador.vcxproj -> D:\Codes\c++\Escalonador\Debug\Escalonador.exe

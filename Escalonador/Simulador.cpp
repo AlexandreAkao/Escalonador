@@ -74,7 +74,7 @@ public:
 		while (true)
 		{
 			if (kernel != NULL) {
-				this_thread::sleep_for(chrono::seconds(1));
+				this_thread::sleep_for(chrono::seconds(3));
 				processAux newProcess = create_random_process();
 
 				//form.changeLabels(new Process(newProcess.id, newProcess.lifeTime, newProcess.state));
@@ -99,10 +99,10 @@ public:
 int main(){
 	srand(time(NULL));
 
-	Scheduler::Algorithms alg = Scheduler::Algorithms::fifo;
+	Scheduler::Algorithms alg = Scheduler::Algorithms::round_robin;
 
 
-	int quantum = 3;
+	int quantum = 4;
 	int processor_cores_number = 3;
 	int nmbProcess = 1;
 	Simulador* simulador = new Simulador(quantum,processor_cores_number,nmbProcess,alg);

@@ -62,7 +62,7 @@ void Process::set_remaining_time(int time)
 
 int Process::decrease_time(int time) {
 	this->remaining_time -= time;
-	return time;
+	return remaining_time;
 }
 
 

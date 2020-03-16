@@ -38,7 +38,6 @@ private:
 	int remaining_time;
 	States state;
 
-
 };
 
 #endif

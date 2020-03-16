@@ -31,7 +31,7 @@ public:
 		}
 	}
 
-	void process_core(int core_position)
+	void process_core_multithread(int core_position)
 	{
 		while (true)
 		{
@@ -46,9 +46,9 @@ public:
 			{
 				cout << "------------------------------" << endl;
 				cpu->printProcessos();
-				printReadQueue();
+				printReadyQueue();
 
-				Process* process = getCpuCore(core_position);
+				Process* process = getCpuCoreProcess(core_position);
 				
 				int tempoParaSerProcessado = 0;
 				if (this->algorithm == Algorithms::round_robin) {
@@ -71,24 +71,70 @@ public:
 		}
 	}
 
+
+	void process_core_singlethread()
+	{
+		while (true)
+		{
+	
+			cout << "---------------------------------------------------------------------------------" << endl;
+			cpu->printProcessos();
+			printReadyQueue();
+			this_thread::sleep_for(chrono::seconds(1));
+			for (int core_position = 0; core_position < qtd_cores; core_position++) {
+				if (cpu->coreIsEmpty(core_position)) {
+					if (ready_queue.size() > 0)
+						schedule_process(core_position);
+
+				}
+				else {
+					if (this->algorithm == Algorithms::round_robin) {
+						Core* core = getCpuCore(core_position);
+
+						if (core->decreaseQuantumTime(1) < 0 || getCpuCoreProcess(core_position)->decrease_time(1) == 0) {
+							deschedule_process(core_position);
+							core->reset_quantum();
+						}
+					}
+					else {
+						Process* process = getCpuCoreProcess(core_position);
+						if (process->decrease_time(1) == 0)
+							deschedule_process(core_position);
+					}
+
+				}
+
+
+				
+			}
+
+	
+
+		}
+	}
+
+
 	void run()
 	{
-		vector<thread> cores_thread;
+		/*vector<thread> cores_thread;
 
 		for (int i = 0; i < qtd_cores; i++)
-			cores_thread.push_back(thread(&Scheduler::process_core, this, i));
+			cores_thread.push_back(thread(&Scheduler::process_core_multithread, this, i));
 		for (thread& t : cores_thread)
-			t.join();
+			t.join();*/
+
+		thread singlethread(&Scheduler::process_core_singlethread, this);
+		singlethread.join();
 
 	}
 
-	void printReadQueue() {
+	void printReadyQueue() {
 		if (printing == false) {
 			printing = true;
 			cout << "A: ";
 			if (ready_queue.size() > 0 ){
 				for (Process* p : ready_queue) {
-					cout << "[ " << p->get_remaining_time() << " , " << p->get_total_time() << "] , ";
+					cout << "[ " << p->get_total_time() << " , " << p->get_remaining_time() << "] , ";
 				}
 			}
 			cout << endl;
@@ -136,10 +182,15 @@ private:
 		this->cpu->getCores()[position]->setProcess(process);
 	}
 
-	Process* getCpuCore(int position) {
+	Process* getCpuCoreProcess(int position) {
 		return this->cpu->getCores()[position]->getProcess();
 	}
 	
+
+	Core* getCpuCore(int position) {
+		return this->cpu->getCores()[position];
+	}
+
 	void schedule_process(int position)
 	{	
 		if (ready_queue.size() > 0) {
@@ -155,7 +206,7 @@ private:
 
 	void deschedule_process(int position)
 	{
-		Process* process = getCpuCore(position);
+		Process* process = getCpuCoreProcess(position);
 		cpu->getCore(position)->setProcess(NULL);
 
 
