@@ -1,0 +1,9 @@
+﻿  CPU.cpp
+  Core.cpp
+  Kernel.cpp
+  Process.cpp
+  Scheduler.cpp
+  Simulador.cpp
+C:\Users\alexa\source\repos\escalonador2\escalonador2\Simulador.cpp(90,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Generating Code...
+  escalonador2.vcxproj -> C:\Users\alexa\source\repos\escalonador2\Debug\escalonador2.exe

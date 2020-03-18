@@ -1,3 +1,0 @@
-D:/Codes/c++/Escalonador/cmake-build-debug/CMakeFiles/Escalonador.dir
-D:/Codes/c++/Escalonador/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/Codes/c++/Escalonador/cmake-build-debug/CMakeFiles/rebuild_cache.dir
