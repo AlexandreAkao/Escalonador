@@ -66,14 +66,11 @@ void Scheduler::process_core_singlethread()
 		cpu->printProcessos();
 		printReadyQueue();
 
-		this_thread::sleep_for(chrono::seconds(1));
+		this_thread::sleep_for(chrono::seconds(3));
 
 		for (int core_position = 0; core_position < qtd_cores; core_position++) {
-			if (cpu->coreIsEmpty(core_position)) {
-				if (ready_queue.size() > 0)
-					schedule_process(core_position);
-			}
-			else {
+			if (!cpu->coreIsEmpty(core_position)) {
+
 				if (this->algorithm == Algorithms::round_robin) {
 					Core* core = getCpuCore(core_position);
 
@@ -81,6 +78,7 @@ void Scheduler::process_core_singlethread()
 						deschedule_process(core_position);
 						core->reset_quantum();
 					}
+
 				}
 				else {
 					Process* process = getCpuCoreProcess(core_position);
@@ -88,8 +86,25 @@ void Scheduler::process_core_singlethread()
 						deschedule_process(core_position);
 				}
 			}
+		
+
+			if (cpu->coreIsEmpty(core_position)) {
+
+				if (ready_queue.size() > 0) {
+					schedule_process(core_position);
+					//cpu->printProcessos();
+
+				}
+			}
+
+		
+			
 		}
+
+
+		
 	}
+
 }
 
 void Scheduler::run()

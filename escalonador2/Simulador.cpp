@@ -62,7 +62,7 @@ public:
 		while (true)
 		{
 			if (kernel != NULL) {
-				this_thread::sleep_for(chrono::seconds(3));
+				this_thread::sleep_for(chrono::seconds(4));
 				processAux newProcess = create_random_process();
 
 				//form.changeLabels(new Process(newProcess.id, newProcess.lifeTime, newProcess.state));
@@ -86,34 +86,16 @@ public:
 
 int main() {
 	srand(time(NULL));
-	//sjf,fifo,round_robin
-	Scheduler::Algorithms alg = Scheduler::Algorithms::round_robin;
+ 	Scheduler::Algorithms alg = Scheduler::Algorithms::round_robin;
 
-	int quantum = 4;
-	int processor_cores_number = 3;
-	int nmbProcess = 5;
+	int quantum = 3;
+	int processor_cores_number = 1;
+	int nmbProcess = 0;
 
 	Simulador* simulador = new Simulador(quantum, processor_cores_number, nmbProcess, alg);
 
 	simulador->start();
-	//thread simuladorThread(&Simulador::start,simulador);
-
-	//cout << "fasdfasfas" << endl;
-
-	//Escalonador::MainScreen form;
-	//Application::Run(% form);
-
-	//simuladorThread.join();
-
-	//list<Process*> a;
-	//a.push_back(new Process(1,3, Process::States::ready));
-	//a.push_back(new Process(2, 2, Process::States::ready));
-	//Process* c = new Process(3, 1, Process::States::ready);
-	//Process* d = new Process(4, 4, Process::States::ready);
-	//Scheduler* b = new 	Scheduler(Scheduler::Algorithms::sjf, 1, a);
-	//b->insert_process(c);
-	//b->insert_process(d);
-	//b->mostrar_queue();
+ 
 
 	return 0;
 }
