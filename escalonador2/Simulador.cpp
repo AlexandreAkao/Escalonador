@@ -31,8 +31,6 @@ public:
 	};
 
 	void start() {
-		/*Application::EnableVisualStyles();
-		Application::SetCompatibleTextRenderingDefault(false);*/
 
 		list<processAux> lista_process = batch_process_init(nmbProcess);
 		thread kernelThread(&Simulador::run, this, lista_process);
@@ -88,12 +86,12 @@ public:
 
 int main() {
 	srand(time(NULL));
-
+	//sjf,fifo,round_robin
 	Scheduler::Algorithms alg = Scheduler::Algorithms::round_robin;
 
 	int quantum = 4;
 	int processor_cores_number = 3;
-	int nmbProcess = 1;
+	int nmbProcess = 5;
 
 	Simulador* simulador = new Simulador(quantum, processor_cores_number, nmbProcess, alg);
 
