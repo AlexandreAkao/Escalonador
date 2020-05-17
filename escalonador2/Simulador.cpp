@@ -90,7 +90,7 @@ int main() {
 
 	int quantum = 3;
 	int processor_cores_number = 1;
-	int nmbProcess = 0;
+	int nmbProcess = 20;
 
 	Simulador* simulador = new Simulador(quantum, processor_cores_number, nmbProcess, alg);
 

@@ -7,6 +7,8 @@ Process::Process(int process_id, int total_time, States state) {
 	this->total_time = total_time;
 	this->remaining_time = total_time;
 	this->state = state;
+	this->memoryPointers[0] = nullptr;
+	this->memoryPointers[1] = nullptr;
 }
 
 void Process::printProcess() {
