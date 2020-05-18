@@ -17,7 +17,7 @@ void CPU::printProcessos()
 				<< c->getProcess()->get_remaining_time() << " , " << c->getProcess()->getStatusAsString() << "] , ";
 		}
 		else {
-			cout << " [ -1 ,-1 , -1] , ";
+			cout << " [ 0 ,0 , 0] , ";
 		}
 	}
 	cout << endl;
