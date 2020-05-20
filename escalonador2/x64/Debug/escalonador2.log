@@ -1,6 +1,9 @@
-﻿  Process.cpp
+﻿  Core.cpp
+  CPU.cpp
+  Kernel.cpp
+  Process.cpp
   Scheduler.cpp
   Simulador.cpp
-D:\Codes\c++\Escalonador\escalonador2\Simulador.cpp(88,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\Codes\c++\Escalonador\escalonador2\Simulador.cpp(95,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Generating Code...
   escalonador2.vcxproj -> D:\Codes\c++\Escalonador\x64\Debug\escalonador2.exe

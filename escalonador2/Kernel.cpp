@@ -1,10 +1,10 @@
 #include "Kernel.h"
 
-Kernel::Kernel(int quantum, int processor_cores_number, Scheduler::Algorithms algorithm)
+Kernel::Kernel(int quantum, int processor_cores_number, Scheduler::Algorithms algorithm, MemoryManager::Algorithms mAlg, int minimumAmountCalls, int totalMemory)
 {
 	this->cpu = new CPU(processor_cores_number, quantum);
 	this->scheduler = new Scheduler(algorithm, processor_cores_number, quantum, cpu);
-
+	this->memoryManger = new MemoryManager(mAlg, totalMemory, minimumAmountCalls );
 }
 
 Kernel::~Kernel()

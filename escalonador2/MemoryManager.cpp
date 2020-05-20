@@ -1,6 +1,6 @@
 #include "MemoryManager.h"
 
-MemoryManager::MemoryManager(int totalMemory,int minimumAmountCalls)
+MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int minimumAmountCalls)
 {
 	this->totalMemory = totalMemory;
 	this->headFreeBlockList = nullptr;

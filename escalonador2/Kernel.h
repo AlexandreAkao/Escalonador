@@ -3,7 +3,8 @@
 #include <thread> 
 #include <time.h>
 #include "MemoryManager.h" 
-#include "Process.h"
+#include "MemoryBlock.h" 
+//#include "Process.h"
 #include "Scheduler.h"
 #include "CPU.h"
 
@@ -12,7 +13,7 @@
 class Kernel
 {
 public:
-	Kernel(int quantum, int processor_cores_number, Scheduler::Algorithms algorithm);
+	Kernel(int quantum, int processor_cores_number, Scheduler::Algorithms algorithm, MemoryManager::Algorithms mAlg,int minimumAmountCalls, int totalMemory);
 	~Kernel();
 	void run();
 	list<Process*> get_process_control_table();
@@ -23,4 +24,5 @@ private:
 	list<Process*> process_control_table;
 	Scheduler* scheduler;
 	CPU* cpu;
+	MemoryManager* memoryManger;
 };

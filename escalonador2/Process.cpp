@@ -7,8 +7,6 @@ Process::Process(int process_id, int total_time, States state) {
 	this->total_time = total_time;
 	this->remaining_time = total_time;
 	this->state = state;
-	this->memoryPointers[0] = nullptr;
-	this->memoryPointers[1] = nullptr;
 	this->dinamicProb = 80;
 }
 
@@ -71,22 +69,24 @@ void Process::setMemoryPointers(MemoryBlock* mb)
 	this->memoryPointers.push_back(mb);
 }
 
-int Process::generateRandomMemory(bool isStatic)
+void Process::generateRandomMemory(bool isStatic)
 {
-	int memoryValue =  rand() % 20 + 1;
+	int memoryValue =  rand() % 4096 + 1;
 	if (isStatic) {
-		return memoryValue;
+		//return memoryValue;
 	}
 	else
 	{
 		if (rand() % 100 > this->dinamicProb) {
-			return memoryValue;
+			memoryValue=  memoryValue;
 		}
 		else {
-			return 0;
+			memoryValue = 0;
 
 		}
 	}
+
+	
 
 }
 

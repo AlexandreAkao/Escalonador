@@ -2,10 +2,7 @@
 class MemoryBlock
 {
 public:
-	enum class algorithm
-	{
-		first_fit, best_fit, quick_fit
-	};
+
 
 	MemoryBlock(int totalBlockSize, int occupedSize, int position);
 	

@@ -1,7 +1,7 @@
 #include <iostream> 
 #include <vector> 
 #include "MemoryBlock.h"
-
+//#include "Kernel.h"
 #pragma once
 
 using namespace std;
@@ -25,7 +25,7 @@ public:
 	void set_remaining_time(int time);
 	int decrease_time(int time);
 	void setMemoryPointers(MemoryBlock* mb);
-	int generateRandomMemory(bool isStatic);
+	void generateRandomMemory(bool isStatic);
 	vector<MemoryBlock*> abortProcess();
 
 	void removeMemoryPointers();
@@ -36,6 +36,7 @@ private:
 	int total_time;
 	int remaining_time;
 	States state;
+	//Kernel* kernel;
 	vector< MemoryBlock*> memoryPointers; 
 
 };

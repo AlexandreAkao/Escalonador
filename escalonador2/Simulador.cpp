@@ -6,22 +6,29 @@
 #include "Process.h"
 #include "Scheduler.h"
 #include "Kernel.h"
+#include "MemoryManager.h"
 
 using namespace std;
 
 class Simulador {
 private:
-	int quantum, processor_cores_number, nmbProcess;
+	int quantum, processor_cores_number, nmbProcess, minimumAmountCalls, totalMemory;
 	Scheduler::Algorithms alg;
+	MemoryManager::Algorithms mAlg;
+
 public:
 	int idTraker = 0;
 	Kernel* kernel = NULL;
 
-	Simulador(int quantum, int processor_cores_number, int nmbProcess, Scheduler::Algorithms alg) {
+	Simulador(int quantum, int processor_cores_number, int nmbProcess, Scheduler::Algorithms alg, MemoryManager::Algorithms mAlg, int minimumAmountCalls, int totalMemory) {
+		
 		this->quantum = quantum;
 		this->processor_cores_number = processor_cores_number;
 		this->nmbProcess = nmbProcess;
 		this->alg = alg;
+		this->mAlg = mAlg;
+		this->minimumAmountCalls = minimumAmountCalls;
+		this->totalMemory = totalMemory;
 	}
 
 	struct processAux {
@@ -41,7 +48,7 @@ public:
 	}
 
 	void run(list<processAux> lista_process) {
-		kernel = new Kernel(quantum, processor_cores_number, alg);
+		kernel = new Kernel(quantum, processor_cores_number, alg, mAlg, minimumAmountCalls, totalMemory);
 
 		for (processAux aux : lista_process)
 			kernel->create_process(aux.id, aux.lifeTime, aux.state);
@@ -87,17 +94,17 @@ public:
 int main() {
 	srand(time(NULL));
  	Scheduler::Algorithms alg = Scheduler::Algorithms::round_robin;
+	MemoryManager::Algorithms mAlg = MemoryManager::Algorithms::first_fit;
 
 	int quantum = 3;
 	int processor_cores_number = 1;
 	int nmbProcess = 20;
+	int minimumAmountCalls = 10;
+	int totalMemory = 4096;
 
-	Simulador* simulador = new Simulador(quantum, processor_cores_number, nmbProcess, alg);
+	Simulador* simulador = new Simulador(quantum, processor_cores_number, nmbProcess, alg, mAlg, minimumAmountCalls, totalMemory);
 
 	simulador->start();
-
-
-
 
 	return 0;
 }
