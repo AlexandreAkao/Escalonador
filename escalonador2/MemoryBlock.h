@@ -2,15 +2,20 @@
 class MemoryBlock
 {
 public:
-	MemoryBlock(int totalBlockSize, int occupiedSize, int position);
+	enum class algorithm
+	{
+		first_fit, best_fit, quick_fit
+	};
+
+	MemoryBlock(int totalBlockSize, int occupedSize, int position);
 	
-	void setOccupiedSize(int ocs);
+	void resetOccupedSize();
 
 	void setNextFreeBlock(MemoryBlock* ocs);
 
 	void removeNextFreeBlock();
 
-	int getOccupiedSize();
+	int getOccupedSize();
 
 	int getTotalBlockSize();
 
@@ -20,7 +25,7 @@ public:
 
 private:
 	int totalBlockSize;
-	int occupiedSize;
+	int occupedSize;
 	int position;
 	MemoryBlock* nextFreeBlock;
 };

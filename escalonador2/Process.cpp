@@ -9,7 +9,9 @@ Process::Process(int process_id, int total_time, States state) {
 	this->state = state;
 	this->memoryPointers[0] = nullptr;
 	this->memoryPointers[1] = nullptr;
+	this->dinamicProb = 80;
 }
+
 
 void Process::printProcess() {
 	cout << "id: " << this->process_id << endl;
@@ -62,4 +64,38 @@ void Process::set_remaining_time(int time)
 int Process::decrease_time(int time) {
 	this->remaining_time -= time;
 	return remaining_time;
+}
+
+void Process::setMemoryPointers(MemoryBlock* mb)
+{
+	this->memoryPointers.push_back(mb);
+}
+
+int Process::generateRandomMemory(bool isStatic)
+{
+	int memoryValue =  rand() % 20 + 1;
+	if (isStatic) {
+		return memoryValue;
+	}
+	else
+	{
+		if (rand() % 100 > this->dinamicProb) {
+			return memoryValue;
+		}
+		else {
+			return 0;
+
+		}
+	}
+
+}
+
+vector<MemoryBlock*> Process::abortProcess()
+{
+	this->state = Process::States::aborted;
+	return this->memoryPointers;
+}
+
+void Process::removeMemoryPointers() {
+	this->memoryPointers.clear();
 }

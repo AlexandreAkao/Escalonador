@@ -10,10 +10,11 @@ class Process
 public:
 	enum class States
 	{
-		ready, running, terminated
+		ready, running, terminated, aborted
 	};
 
 	Process(int process_id, int total_time, States state);
+
 	void printProcess();
 	string getStatusAsString();
 	int get_remaining_time();
@@ -23,9 +24,14 @@ public:
 	void set_state(States state);
 	void set_remaining_time(int time);
 	int decrease_time(int time);
+	void setMemoryPointers(MemoryBlock* mb);
+	int generateRandomMemory(bool isStatic);
+	vector<MemoryBlock*> abortProcess();
 
+	void removeMemoryPointers();
 
 private:
+	int dinamicProb;
 	int process_id;
 	int total_time;
 	int remaining_time;

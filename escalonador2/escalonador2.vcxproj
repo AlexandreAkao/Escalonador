@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -141,6 +141,8 @@
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="CPU.cpp" />
     <ClCompile Include="Kernel.cpp" />
+    <ClCompile Include="MemoryBlock.cpp" />
+    <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="Simulador.cpp" />
@@ -149,6 +151,8 @@
     <ClInclude Include="Core.h" />
     <ClInclude Include="CPU.h" />
     <ClInclude Include="Kernel.h" />
+    <ClInclude Include="MemoryBlock.h" />
+    <ClInclude Include="MemoryManager.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="Scheduler.h" />
   </ItemGroup>

@@ -2,7 +2,7 @@
 #include <iostream> 
 #include <thread> 
 #include <time.h>
-
+#include "MemoryManager.h" 
 #include "Process.h"
 #include "Scheduler.h"
 #include "CPU.h"

@@ -95,7 +95,9 @@ int main() {
 	Simulador* simulador = new Simulador(quantum, processor_cores_number, nmbProcess, alg);
 
 	simulador->start();
- 
+
+
+
 
 	return 0;
 }

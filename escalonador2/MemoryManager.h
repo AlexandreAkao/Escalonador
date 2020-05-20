@@ -6,25 +6,30 @@ using namespace std;
 class MemoryManager
 {
 public:
-	MemoryManager(int totalMemory) {
-		this->totalMemory = totalMemory;
-		this->freeBlockList = nullptr;
-		this->memoryOverhead = 0;
-		this->availableMemory = totalMemory;
-		this->occupiedMemory = 0;
-	}
-	MemoryBlock* malloc(int memory);
+	MemoryManager(int totalMemory, int minimumAmountCalls);
 
-	bool checkFreeMemory() {
-		
-	}
+	MemoryBlock* malloc(int memoryNeeded);
+
+	bool checkFreeMemory(int memoryNeeded);
+
+	void free(MemoryBlock* position);
+
+
 
 private:
+	void calculateAvaibleMemory();
+
+	void removeBlock(MemoryBlock* mb);
+
 	vector<MemoryBlock*> memory;
-	MemoryBlock* freeBlockList;
+	MemoryBlock* headFreeBlockList;
+	MemoryBlock* tailFreeBlockList;
+
 	int totalMemory;
 	int memoryOverhead;
 	int availableMemory;
 	int occupiedMemory;
+	int memoryStaticOverhead;
+	int minimumAmountCalls;
 };
 
