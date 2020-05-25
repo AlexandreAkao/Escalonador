@@ -69,24 +69,32 @@ void Process::setMemoryPointers(MemoryBlock* mb)
 	this->memoryPointers.push_back(mb);
 }
 
-void Process::generateRandomMemory(bool isStatic)
+bool Process::generateRandomMemory(bool isStatic, MemoryManager* memManager)
 {
 	int memoryValue =  rand() % 4096 + 1;
-	if (isStatic) {
-		//return memoryValue;
-	}
-	else
+ 
+	if (! isStatic)
 	{
 		if (rand() % 100 > this->dinamicProb) {
 			memoryValue=  memoryValue;
 		}
 		else {
 			memoryValue = 0;
-
+		}
+	}
+	
+	if (memoryValue != 0) {
+		if (memManager->checkFreeMemory(memoryValue)) {
+			MemoryBlock* a = memManager->malloc(memoryValue);
+			this->setMemoryPointers(a);
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 
-	
+	return true;
 
 }
 

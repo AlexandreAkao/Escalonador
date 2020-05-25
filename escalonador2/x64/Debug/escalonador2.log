@@ -1,5 +1,5 @@
-﻿  Core.cpp
-  CPU.cpp
+﻿  CPU.cpp
+  Core.cpp
   Kernel.cpp
   Process.cpp
   Scheduler.cpp

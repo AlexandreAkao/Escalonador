@@ -1,7 +1,8 @@
 #include "Scheduler.h"
 
-Scheduler::Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu)
+Scheduler::Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu, MemoryManager* memoryManager)
 {
+	this->memoryManager = memoryManager;
 	this->cpu = cpu;
 	this->algorithm = algotithm;
 	this->quantum = quantum;
@@ -10,12 +11,20 @@ Scheduler::Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu)
 
 void Scheduler::insert_process(Process* newProcess)
 {
-	if (algorithm == Algorithms::sjf) {
-		insertOnSort(newProcess);
+	bool key = newProcess->generateRandomMemory(true, this->memoryManager);
+	if (key) {
+
+		if (algorithm == Algorithms::sjf) {
+			insertOnSort(newProcess);
+		}
+		else {
+			ready_queue.push_back(newProcess);
+		}
 	}
 	else {
-		ready_queue.push_back(newProcess);
+		this->abortProcess(newProcess);
 	}
+
 }
 
 void Scheduler::process_core_multithread(int core_position)
@@ -24,7 +33,6 @@ void Scheduler::process_core_multithread(int core_position)
 	{
 		if (cpu->coreIsEmpty(core_position)) {
 			if (ready_queue.size() > 0) {
-
 				schedule_process(core_position);
 			}
 		}
@@ -203,4 +211,13 @@ void Scheduler::deschedule_process(int position)
 	else {
 		process->set_state(Process::States::terminated);
 	}
+}
+
+void Scheduler::abortProcess(Process* process)
+{
+	vector<MemoryBlock*> blocks =  process->abortProcess();
+	for (MemoryBlock* mb : blocks) {
+		this->memoryManager->free(mb);
+	}
+	process->removeMemoryPointers();
 }

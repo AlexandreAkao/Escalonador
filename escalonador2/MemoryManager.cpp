@@ -84,7 +84,6 @@ void MemoryManager::removeBlock(MemoryBlock* mb)
 		}
 		aux->setNextFreeBlock(nullptr);
 		this->tailFreeBlockList = aux;
-
 	}
 	else
 	{

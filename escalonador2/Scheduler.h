@@ -16,7 +16,7 @@ public:
 		fifo, sjf, round_robin
 	};
 
-	Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu);
+	Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu, MemoryManager* memoryManager);
 	void insert_process(Process* newProcess);
 	void process_core_multithread(int core_position);
 	void process_core_singlethread();
@@ -31,6 +31,8 @@ private:
 	CPU* cpu;
 	int qtd_cores;
 	bool printing = false;
+	MemoryManager* memoryManager;
+	
 
 	void insertOnSort(Process* new_process);
 	void setCpuCore(int position, Process* process);
@@ -38,4 +40,5 @@ private:
 	Core* getCpuCore(int position);
 	void schedule_process(int position);
 	void deschedule_process(int position);
+	void abortProcess(Process* process);
 };

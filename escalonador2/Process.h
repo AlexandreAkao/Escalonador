@@ -1,7 +1,8 @@
 #include <iostream> 
 #include <vector> 
 #include "MemoryBlock.h"
-//#include "Kernel.h"
+#include "MemoryManager.h"
+
 #pragma once
 
 using namespace std;
@@ -24,8 +25,8 @@ public:
 	void set_state(States state);
 	void set_remaining_time(int time);
 	int decrease_time(int time);
-	void setMemoryPointers(MemoryBlock* mb);
-	void generateRandomMemory(bool isStatic);
+	void setMemoryPointers(MemoryBlock* m);
+	bool generateRandomMemory(bool isStatic, MemoryManager* memManger);
 	vector<MemoryBlock*> abortProcess();
 
 	void removeMemoryPointers();
