@@ -71,7 +71,6 @@ public:
 			if (kernel != NULL) {
 				this_thread::sleep_for(chrono::seconds(4));
 				processAux newProcess = create_random_process();
-
 				//form.changeLabels(new Process(newProcess.id, newProcess.lifeTime, newProcess.state));
 				kernel->create_process(newProcess.id, newProcess.lifeTime, newProcess.state);
 			}
@@ -93,14 +92,14 @@ public:
 
 int main() {
 	srand(time(NULL));
- 	Scheduler::Algorithms alg = Scheduler::Algorithms::round_robin;
+ 	Scheduler::Algorithms alg = Scheduler::Algorithms::fifo;
 	MemoryManager::Algorithms mAlg = MemoryManager::Algorithms::first_fit;
 
 	int quantum = 3;
-	int processor_cores_number = 1;
-	int nmbProcess = 20;
+	int processor_cores_number = 2;
+	int nmbProcess = 10;
 	int minimumAmountCalls = 10;
-	int totalMemory = 4096;
+	int totalMemory = 6000;
 
 	Simulador* simulador = new Simulador(quantum, processor_cores_number, nmbProcess, alg, mAlg, minimumAmountCalls, totalMemory);
 

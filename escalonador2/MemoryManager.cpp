@@ -7,6 +7,7 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	this->tailFreeBlockList = nullptr;
 	this->minimumAmountCalls = minimumAmountCalls;
 	this->memoryOverhead = 0;
+	this->freeMemoryLen = 0;
 	this->availableMemory = totalMemory;
 	this->occupiedMemory = 0;
 	this->memoryStaticOverhead = 16;
@@ -21,6 +22,7 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded)
 		if (mbAux->getTotalBlockSize() >= memoryNeeded) {
 			this->calculateAvaibleMemory();
 			this->removeBlock(mbAux);
+			this->freeMemoryLen--;
 			return mbAux;
 		}
 		mbAux = mbAux->getNextFreeBlock();
@@ -43,31 +45,49 @@ bool MemoryManager::checkFreeMemory(int memoryNeeded)
 		return false;
 	else {
 		MemoryBlock* mb_aux = this->headFreeBlockList;
+		int avaibleInMemoryBlock = 0;
 		while (mb_aux != nullptr) {
 			if (mb_aux->getTotalBlockSize() >= memoryNeeded) {
 				return true;
 			}
+
+			avaibleInMemoryBlock += mb_aux->getTotalBlockSize();
+			mb_aux = mb_aux->getNextFreeBlock();
 		}
 
-		return false;
+		if (this->availableMemory - avaibleInMemoryBlock >= memoryNeeded)
+			return true;
+		else
+			return false;
+
 
 	}
 }
 
-void MemoryManager::free(MemoryBlock* position)
+void MemoryManager::free(MemoryBlock* block)
 {
-	int occupedSize = position->getOccupedSize();
+ 	int occupedSize = block->getOccupedSize();
 	this->occupiedMemory -= occupedSize;
 	this->calculateAvaibleMemory();
+	block->resetOccupedSize();
 
-	position->resetOccupedSize();
-	this->tailFreeBlockList->setNextFreeBlock(position);
-	this->tailFreeBlockList = position;
+	if (tailFreeBlockList == nullptr) {
+		headFreeBlockList = block;
+		tailFreeBlockList = block;
+	}
+	else {
+		this->tailFreeBlockList->setNextFreeBlock(block);
+		this->tailFreeBlockList = block;
+	}
+
+	this->freeMemoryLen++;
+
+
 }
 
 void MemoryManager::calculateAvaibleMemory()
 {
-	this->availableMemory = this->totalMemory - this->memoryStaticOverhead - this->occupiedMemory;
+	this->availableMemory = this->totalMemory - this->memoryOverhead - this->occupiedMemory;
 }
 
 void MemoryManager::removeBlock(MemoryBlock* mb)
@@ -97,4 +117,8 @@ void MemoryManager::removeBlock(MemoryBlock* mb)
 	}
 	mb->setNextFreeBlock(nullptr);
 
+}
+
+void MemoryManager::showStatus() {
+	cout << "T: " << this->totalMemory << " ,A: " << this->availableMemory << " ,O: " << this->occupiedMemory << " ,Ov " << this->memoryOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeMemoryLen<< endl;
 }

@@ -2,12 +2,13 @@
 
 using namespace std;
 
-Process::Process(int process_id, int total_time, States state) {
+Process::Process(int process_id, int total_time, States state, MemoryManager* memoryManager) {
 	this->process_id = process_id;
 	this->total_time = total_time;
 	this->remaining_time = total_time;
 	this->state = state;
 	this->dinamicProb = 80;
+	this->memoryManager = memoryManager;
 }
 
 
@@ -69,24 +70,24 @@ void Process::setMemoryPointers(MemoryBlock* mb)
 	this->memoryPointers.push_back(mb);
 }
 
-bool Process::generateRandomMemory(bool isStatic, MemoryManager* memManager)
+int Process::getTotalMemory() {
+	return this->totalMemory;
+}
+
+
+bool Process::generateRandomMemory(bool isStatic)
 {
 	int memoryValue =  rand() % 4096 + 1;
- 
-	if (! isStatic)
-	{
-		if (rand() % 100 > this->dinamicProb) {
-			memoryValue=  memoryValue;
-		}
-		else {
-			memoryValue = 0;
-		}
-	}
+	
+	if (!isStatic && rand() % 100 < this->dinamicProb) 
+		memoryValue = 0;
+
 	
 	if (memoryValue != 0) {
-		if (memManager->checkFreeMemory(memoryValue)) {
-			MemoryBlock* a = memManager->malloc(memoryValue);
-			this->setMemoryPointers(a);
+		if (this->memoryManager->checkFreeMemory(memoryValue)) {
+			MemoryBlock* newBlock = this->memoryManager->malloc(memoryValue);
+			this->setMemoryPointers(newBlock);
+			this->totalMemory += memoryValue;
 			return true;
 		}
 		else {
@@ -98,12 +99,17 @@ bool Process::generateRandomMemory(bool isStatic, MemoryManager* memManager)
 
 }
 
-vector<MemoryBlock*> Process::abortProcess()
+void Process::abortProcess()
 {
 	this->state = Process::States::aborted;
-	return this->memoryPointers;
+	this->freeMemoryPointers();
 }
 
-void Process::removeMemoryPointers() {
+void Process::freeMemoryPointers() {
+	for (MemoryBlock* mb : this->memoryPointers) {
+		this->memoryManager->free(mb);
+	}
 	this->memoryPointers.clear();
 }
+
+

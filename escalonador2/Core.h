@@ -17,4 +17,5 @@ public:
 	int getPosicao();
 	void setProcess(Process* process);
 	bool coreIsEmpty();
+	bool genarateDynamicMemory();
 };

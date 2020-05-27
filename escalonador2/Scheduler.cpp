@@ -11,8 +11,9 @@ Scheduler::Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu, Mem
 
 void Scheduler::insert_process(Process* newProcess)
 {
-	bool key = newProcess->generateRandomMemory(true, this->memoryManager);
-	if (key) {
+	bool wasCreated = newProcess->generateRandomMemory(true);
+	//cout << wasCreated << endl;
+	if (wasCreated) {
 
 		if (algorithm == Algorithms::sjf) {
 			insertOnSort(newProcess);
@@ -22,48 +23,11 @@ void Scheduler::insert_process(Process* newProcess)
 		}
 	}
 	else {
-		this->abortProcess(newProcess);
+		newProcess->abortProcess();
 	}
 
 }
 
-void Scheduler::process_core_multithread(int core_position)
-{
-	while (true)
-	{
-		if (cpu->coreIsEmpty(core_position)) {
-			if (ready_queue.size() > 0) {
-				schedule_process(core_position);
-			}
-		}
-		else
-		{
-			cout << "------------------------------" << endl;
-			cpu->printProcessos();
-			printReadyQueue();
-
-			Process* process = getCpuCoreProcess(core_position);
-
-			int tempoParaSerProcessado = 0;
-
-			if (this->algorithm == Algorithms::round_robin) {
-				tempoParaSerProcessado = quantum;
-			}
-			else {
-				tempoParaSerProcessado = process->get_remaining_time();
-			}
-
-			for (int i = 0; i < tempoParaSerProcessado; i++) {
-				this_thread::sleep_for(chrono::seconds(1));
-
-				if (process->decrease_time(1) == 0)
-					break;
-			}
-			
-			deschedule_process(core_position);
-		}
-	}
-}
 
 void Scheduler::process_core_singlethread()
 {
@@ -72,26 +36,29 @@ void Scheduler::process_core_singlethread()
 		cout << "---------------------------------------------------------------------------------" << endl;
 
 		cpu->printProcessos();
+		this->memoryManager->showStatus();
 		printReadyQueue();
 
 		this_thread::sleep_for(chrono::seconds(3));
 
 		for (int core_position = 0; core_position < qtd_cores; core_position++) {
 			if (!cpu->coreIsEmpty(core_position)) {
+				Process* process = getCpuCoreProcess(core_position);
+				bool wasAlocated = process->generateRandomMemory(false);
 
 				if (this->algorithm == Algorithms::round_robin) {
 					Core* core = getCpuCore(core_position);
 
-					if (core->decreaseQuantumTime(1) < 0 || getCpuCoreProcess(core_position)->decrease_time(1) == 0) {
-						deschedule_process(core_position);
+					if (!wasAlocated || core->decreaseQuantumTime(1) < 0 || getCpuCoreProcess(core_position)->decrease_time(1) == 0) {
+						deschedule_process(core_position, wasAlocated);
 						core->reset_quantum();
 					}
 
 				}
 				else {
-					Process* process = getCpuCoreProcess(core_position);
-					if (process->decrease_time(1) == 0)
-						deschedule_process(core_position);
+					//Process* process = getCpuCoreProcess(core_position);
+					if (!wasAlocated || process->decrease_time(1) == 0)
+						deschedule_process(core_position, wasAlocated);
 				}
 			}
 		
@@ -135,7 +102,7 @@ void Scheduler::printReadyQueue()
 		cout << "A: ";
 		if (ready_queue.size() > 0) {
 			for (Process* p : ready_queue) {
-				cout << "[ " << p->get_total_time() << " , " << p->get_remaining_time() << "] , ";
+				cout << "[ " << p->get_total_time() << " , " << p->get_remaining_time() << " ,M: " << p->getTotalMemory() << "] , ";
 			}
 		}
 		cout << endl;
@@ -143,12 +110,7 @@ void Scheduler::printReadyQueue()
 	}
 }
 
-void Scheduler::mostrar_queue()
-{
-	for (Process* p : ready_queue) {
-		cout << p->get_process_id() << endl;
-	}
-}
+
 
 list<Process*> Scheduler::get_queue()
 {
@@ -199,25 +161,24 @@ void Scheduler::schedule_process(int position)
 	}
 }
 
-void Scheduler::deschedule_process(int position)
+void Scheduler::deschedule_process(int position, bool wasTerminated)
 {
 	Process* process = getCpuCoreProcess(position);
 	cpu->getCore(position)->setProcess(NULL);
 
-	if (process->get_remaining_time() > 0) {
-		process->set_state(Process::States::ready);
-		insert_process(process);
+	if (wasTerminated){
+		if (process->get_remaining_time() > 0) {
+			process->set_state(Process::States::ready);
+			insert_process(process);
+		}
+		else {
+			
+			process->set_state(Process::States::terminated);
+			process->freeMemoryPointers();
+		}
 	}
-	else {
-		process->set_state(Process::States::terminated);
+	else
+	{
+		process->abortProcess();
 	}
-}
-
-void Scheduler::abortProcess(Process* process)
-{
-	vector<MemoryBlock*> blocks =  process->abortProcess();
-	for (MemoryBlock* mb : blocks) {
-		this->memoryManager->free(mb);
-	}
-	process->removeMemoryPointers();
 }

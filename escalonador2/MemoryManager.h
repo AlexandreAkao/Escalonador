@@ -1,4 +1,6 @@
 #include <vector> 
+#include <iostream> 
+
 #include "MemoryBlock.h"
 
 using namespace std;
@@ -18,12 +20,14 @@ public:
 	bool checkFreeMemory(int memoryNeeded);
 
 	void free(MemoryBlock* position);
+	void showStatus();
 
 
 private:
 	void calculateAvaibleMemory();
 
 	void removeBlock(MemoryBlock* mb);
+
 
 	vector<MemoryBlock*> memory;
 	MemoryBlock* headFreeBlockList;
@@ -35,5 +39,6 @@ private:
 	int occupiedMemory;
 	int memoryStaticOverhead;
 	int minimumAmountCalls;
+	int freeMemoryLen = 0;
 };
 

@@ -38,3 +38,8 @@ bool Core::coreIsEmpty()
 {
 	return (process == NULL);
 }
+
+bool Core::genarateDynamicMemory()
+{
+	return this->process->generateRandomMemory(false);
+}

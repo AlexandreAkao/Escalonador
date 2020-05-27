@@ -14,7 +14,7 @@ void CPU::printProcessos()
 	for (Core* c : cores) {
 		if (c->getProcess() != NULL) {
 			cout << " [" << c->getProcess()->get_process_id() << " , "
-				<< c->getProcess()->get_remaining_time() << " , " << c->getProcess()->getStatusAsString() << "] , ";
+				<< c->getProcess()->get_remaining_time() << " , M: " << c->getProcess()->getTotalMemory() << "] , ";
 		}
 		else {
 			cout << " [ -1 ,-1 , -1] , ";
