@@ -80,23 +80,21 @@ bool Process::generateRandomMemory(bool isStatic)
 	int memoryValue =  rand() % 4096 + 1;
 	
 	if (!isStatic && rand() % 100 < this->dinamicProb) 
-		memoryValue = 0;
+		return true;
 
 	
-	if (memoryValue != 0) {
-		if (this->memoryManager->checkFreeMemory(memoryValue)) {
-			MemoryBlock* newBlock = this->memoryManager->malloc(memoryValue);
-			this->setMemoryPointers(newBlock);
-			this->totalMemory += memoryValue;
-			return true;
-		}
-		else {
-			return false;
-		}
+	if (this->memoryManager->checkFreeMemory(memoryValue)) {
+		MemoryBlock* newBlock = this->memoryManager->malloc(memoryValue);
+		this->setMemoryPointers(newBlock);
+		this->totalMemory += memoryValue;
+		return true;
 	}
+	else {
+		return false;
+	}
+	
 
-	return true;
-
+ 
 }
 
 void Process::abortProcess()

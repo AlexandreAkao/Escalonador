@@ -17,7 +17,7 @@ public:
 	};
 
 	Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu, MemoryManager* memoryManager);
-	void insert_process(Process* newProcess);
+	void insert_process(Process* newProcess, bool isNew);
  	void process_core_singlethread();
 	void run();
 	void printReadyQueue();

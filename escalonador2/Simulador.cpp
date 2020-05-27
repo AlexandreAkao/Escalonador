@@ -92,10 +92,10 @@ public:
 
 int main() {
 	srand(time(NULL));
- 	Scheduler::Algorithms alg = Scheduler::Algorithms::fifo;
+ 	Scheduler::Algorithms alg = Scheduler::Algorithms::round_robin;
 	MemoryManager::Algorithms mAlg = MemoryManager::Algorithms::first_fit;
 
-	int quantum = 3;
+	int quantum = 2;
 	int processor_cores_number = 2;
 	int nmbProcess = 10;
 	int minimumAmountCalls = 10;

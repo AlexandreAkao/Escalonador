@@ -9,11 +9,14 @@ Scheduler::Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu, Mem
 	qtd_cores = cores;
 }
 
-void Scheduler::insert_process(Process* newProcess)
-{
-	bool wasCreated = newProcess->generateRandomMemory(true);
-	//cout << wasCreated << endl;
-	if (wasCreated) {
+void Scheduler::insert_process(Process* newProcess, bool isNew)
+{	
+	bool wasCreated = true;
+	if (isNew) {
+		wasCreated = newProcess->generateRandomMemory(true);
+	}
+	
+ 	if (wasCreated) {
 
 		if (algorithm == Algorithms::sjf) {
 			insertOnSort(newProcess);
@@ -39,7 +42,7 @@ void Scheduler::process_core_singlethread()
 		this->memoryManager->showStatus();
 		printReadyQueue();
 
-		this_thread::sleep_for(chrono::seconds(3));
+		this_thread::sleep_for(chrono::seconds(1));
 
 		for (int core_position = 0; core_position < qtd_cores; core_position++) {
 			if (!cpu->coreIsEmpty(core_position)) {
@@ -102,7 +105,7 @@ void Scheduler::printReadyQueue()
 		cout << "A: ";
 		if (ready_queue.size() > 0) {
 			for (Process* p : ready_queue) {
-				cout << "[ " << p->get_total_time() << " , " << p->get_remaining_time() << " ,M: " << p->getTotalMemory() << "] , ";
+				cout << "[ " << p->get_process_id() << " , " << p->get_remaining_time() << " ,M: " << p->getTotalMemory() << "] , ";
 			}
 		}
 		cout << endl;
@@ -169,12 +172,11 @@ void Scheduler::deschedule_process(int position, bool wasTerminated)
 	if (wasTerminated){
 		if (process->get_remaining_time() > 0) {
 			process->set_state(Process::States::ready);
-			insert_process(process);
+			insert_process(process, false);
 		}
 		else {
-			
-			process->set_state(Process::States::terminated);
 			process->freeMemoryPointers();
+			process->set_state(Process::States::terminated);
 		}
 	}
 	else

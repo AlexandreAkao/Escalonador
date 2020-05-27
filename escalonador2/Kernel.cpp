@@ -37,5 +37,5 @@ void Kernel::kill_process(Process* process) {
 
 void Kernel::run_process(Process* process)
 {
-	scheduler->insert_process(process);
+	scheduler->insert_process(process, true);
 }
