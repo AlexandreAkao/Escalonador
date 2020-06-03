@@ -69,7 +69,7 @@ public:
 			if (kernel != NULL) {
 				this_thread::sleep_for(chrono::seconds(4));
 				processAux newProcess = create_random_process();
-				//form.changeLabels(new Process(newProcess.id, newProcess.lifeTime, newProcess.state));
+
 				kernel->create_process(newProcess.id, newProcess.lifeTime, newProcess.state);
 			}
 		}
@@ -84,9 +84,6 @@ public:
 		return processInitList;
 	}
 };
-
-
-//[STAThread]
 
 int main() {
 	srand(time(NULL));

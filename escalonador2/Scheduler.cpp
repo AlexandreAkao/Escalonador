@@ -63,7 +63,6 @@ void Scheduler::process_core_singlethread() {
 				if (ready_queue.size() > 0) {
 					schedule_process(core_position);
 					//cpu->printProcessos();
-
 				}
 			}
 		}
@@ -144,7 +143,7 @@ void Scheduler::deschedule_process(int position, bool wasTerminated) {
 	Process* process = getCpuCoreProcess(position);
 	cpu->getCore(position)->setProcess(NULL);
 
-	if (wasTerminated){
+	if (wasTerminated) {
 		if (process->get_remaining_time() > 0) {
 			process->set_state(Process::States::ready);
 			insert_process(process, false);
