@@ -104,6 +104,7 @@ void Process::abortProcess()
 }
 
 void Process::freeMemoryPointers() {
+
 	for (MemoryBlock* mb : this->memoryPointers) {
 		this->memoryManager->free(mb);
 	}

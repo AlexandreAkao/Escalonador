@@ -181,6 +181,8 @@ void Scheduler::deschedule_process(int position, bool wasTerminated)
 	}
 	else
 	{
-		process->abortProcess();
+		cout << "Abort: " << process->get_process_id() << endl;
+
+ 		process->abortProcess();
 	}
 }

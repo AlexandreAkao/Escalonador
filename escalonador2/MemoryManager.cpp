@@ -23,6 +23,7 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded)
 			this->calculateAvaibleMemory();
 			this->removeBlock(mbAux);
 			this->freeMemoryLen--;
+			mbAux->setOccupedSize(memoryNeeded);
 			return mbAux;
 		}
 		mbAux = mbAux->getNextFreeBlock();
@@ -68,8 +69,10 @@ void MemoryManager::free(MemoryBlock* block)
 {
  	int occupedSize = block->getOccupedSize();
 	this->occupiedMemory -= occupedSize;
-	this->calculateAvaibleMemory();
 	block->resetOccupedSize();
+
+	this->calculateAvaibleMemory();
+	//block->resetOccupedSize();
 
 	if (tailFreeBlockList == nullptr) {
 		headFreeBlockList = block;

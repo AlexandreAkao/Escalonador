@@ -38,6 +38,11 @@ int MemoryBlock::getPosition()
 	return this->position;
 }
 
+void MemoryBlock::setOccupedSize(int newO)
+{
+	this->occupedSize = newO;
+}
+
 MemoryBlock* MemoryBlock::getNextFreeBlock()
 {
 	return this->nextFreeBlock;

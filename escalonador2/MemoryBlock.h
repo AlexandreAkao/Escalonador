@@ -18,6 +18,8 @@ public:
 
 	int getPosition();
 
+	void setOccupedSize(int newO);
+
 	MemoryBlock* getNextFreeBlock();
 
 private:
