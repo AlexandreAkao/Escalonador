@@ -21,7 +21,6 @@ public:
 	Kernel* kernel = NULL;
 
 	Simulador(int quantum, int processor_cores_number, int nmbProcess, Scheduler::Algorithms alg, MemoryManager::Algorithms mAlg, int minimumAmountCalls, int totalMemory) {
-		
 		this->quantum = quantum;
 		this->processor_cores_number = processor_cores_number;
 		this->nmbProcess = nmbProcess;
@@ -66,8 +65,7 @@ public:
 	}
 
 	void addNewProcess() {
-		while (true)
-		{
+		while (true) {
 			if (kernel != NULL) {
 				this_thread::sleep_for(chrono::seconds(4));
 				processAux newProcess = create_random_process();

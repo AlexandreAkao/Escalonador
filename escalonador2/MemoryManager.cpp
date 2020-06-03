@@ -1,7 +1,6 @@
 #include "MemoryManager.h"
 
-MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int minimumAmountCalls)
-{
+MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int minimumAmountCalls) {
 	this->totalMemory = totalMemory;
 	this->headFreeBlockList = nullptr;
 	this->tailFreeBlockList = nullptr;
@@ -13,8 +12,7 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	this->memoryStaticOverhead = 16;
 }
 
-MemoryBlock* MemoryManager::malloc(int memoryNeeded)
-{
+MemoryBlock* MemoryManager::malloc(int memoryNeeded) {
 	MemoryBlock* mbAux = this->headFreeBlockList;
 	this->occupiedMemory += memoryNeeded;
 
@@ -65,8 +63,7 @@ bool MemoryManager::checkFreeMemory(int memoryNeeded)
 	}
 }
 
-void MemoryManager::free(MemoryBlock* block)
-{
+void MemoryManager::free(MemoryBlock* block) {
  	int occupedSize = block->getOccupedSize();
 	this->occupiedMemory -= occupedSize;
 	block->resetOccupedSize();
@@ -77,42 +74,32 @@ void MemoryManager::free(MemoryBlock* block)
 	if (tailFreeBlockList == nullptr) {
 		headFreeBlockList = block;
 		tailFreeBlockList = block;
-	}
-	else {
+	} else {
 		this->tailFreeBlockList->setNextFreeBlock(block);
 		this->tailFreeBlockList = block;
 	}
 
 	this->freeMemoryLen++;
-
-
 }
 
-void MemoryManager::calculateAvaibleMemory()
-{
+void MemoryManager::calculateAvaibleMemory() {
 	this->availableMemory = this->totalMemory - this->memoryOverhead - this->occupiedMemory;
 }
 
-void MemoryManager::removeBlock(MemoryBlock* mb)
-{
+void MemoryManager::removeBlock(MemoryBlock* mb) {
 	if (mb == this->headFreeBlockList) {
 		//MemoryBlock* aux = mb->getNextFreeBlock();
 		this->headFreeBlockList = mb->getNextFreeBlock();
-	}
-	else if (mb == this->tailFreeBlockList) {
+	} else if (mb == this->tailFreeBlockList) {
 		MemoryBlock* aux = this->headFreeBlockList;
-		while (aux->getNextFreeBlock() != mb)
-		{
+		while (aux->getNextFreeBlock() != mb) {
 			aux = aux->getNextFreeBlock();
 		}
 		aux->setNextFreeBlock(nullptr);
 		this->tailFreeBlockList = aux;
-	}
-	else
-	{
+	} else {
 		MemoryBlock* aux = this->headFreeBlockList;
-		while (aux->getNextFreeBlock() != mb)
-		{
+		while (aux->getNextFreeBlock() != mb) {
 			aux = aux->getNextFreeBlock();
 		}
 

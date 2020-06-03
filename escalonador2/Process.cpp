@@ -11,11 +11,11 @@ Process::Process(int process_id, int total_time, States state, MemoryManager* me
 	this->memoryManager = memoryManager;
 }
 
-
 void Process::printProcess() {
 	cout << "id: " << this->process_id << endl;
 	cout << "tempo inicial: " << this->total_time << endl;
 	cout << "tempo remanecente: " << this->remaining_time << endl;
+
 	if (this->state == Process::States::running)
 		cout << "Status : running" << endl;
 	else if (this->state == Process::States::terminated)
@@ -45,18 +45,15 @@ int Process::get_process_id() {
 	return process_id;
 }
 
-Process::States Process::getState()
-{
+Process::States Process::getState() {
 	return this->state;
 }
 
-void Process::set_state(States state)
-{
+void Process::set_state(States state) {
 	this->state = state;
 }
 
-void Process::set_remaining_time(int time)
-{
+void Process::set_remaining_time(int time) {
 	this->remaining_time = time;
 }
 
@@ -65,8 +62,7 @@ int Process::decrease_time(int time) {
 	return remaining_time;
 }
 
-void Process::setMemoryPointers(MemoryBlock* mb)
-{
+void Process::setMemoryPointers(MemoryBlock* mb) {
 	this->memoryPointers.push_back(mb);
 }
 
@@ -74,38 +70,30 @@ int Process::getTotalMemory() {
 	return this->totalMemory;
 }
 
-
-bool Process::generateRandomMemory(bool isStatic)
-{
+bool Process::generateRandomMemory(bool isStatic) {
 	int memoryValue =  rand() % 4096 + 1;
 	
-	if (!isStatic && rand() % 100 < this->dinamicProb) 
+	if (!isStatic && rand() % 100 < this->dinamicProb) {
 		return true;
-
+	}
 	
 	if (this->memoryManager->checkFreeMemory(memoryValue)) {
 		MemoryBlock* newBlock = this->memoryManager->malloc(memoryValue);
 		this->setMemoryPointers(newBlock);
 		this->totalMemory += memoryValue;
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
-	
-
- 
 }
 
-void Process::abortProcess()
-{
+void Process::abortProcess() {
 	this->state = Process::States::aborted;
 	this->freeMemoryPointers();
 }
 
 void Process::freeMemoryPointers() {
-
-	for (MemoryBlock* mb : this->memoryPointers) {
+	for (MemoryBlock* mb: this->memoryPointers) {
 		this->memoryManager->free(mb);
 	}
 	this->memoryPointers.clear();

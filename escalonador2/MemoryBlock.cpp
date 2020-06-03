@@ -1,49 +1,40 @@
 #include "MemoryBlock.h"
 
-MemoryBlock::MemoryBlock(int totalBlockSize, int occupedSize, int position)
-{
+MemoryBlock::MemoryBlock(int totalBlockSize, int occupedSize, int position) {
 	this->nextFreeBlock = nullptr;
 	this->totalBlockSize = totalBlockSize;
 	this->occupedSize = occupedSize;
 	this->position = position;
 }
 
-void MemoryBlock::resetOccupedSize()
-{
+void MemoryBlock::resetOccupedSize() {
 	this->occupedSize = 0;
 }
 
-void MemoryBlock::setNextFreeBlock(MemoryBlock* ocs)
-{
+void MemoryBlock::setNextFreeBlock(MemoryBlock* ocs) {
 	this->nextFreeBlock = ocs;
 }
 
-void MemoryBlock::removeNextFreeBlock()
-{
+void MemoryBlock::removeNextFreeBlock() {
 	this->nextFreeBlock = nullptr;
 }
 
-int MemoryBlock::getOccupedSize()
-{
+int MemoryBlock::getOccupedSize() {
 	return this->occupedSize;
 }
 
-int MemoryBlock::getTotalBlockSize()
-{
+int MemoryBlock::getTotalBlockSize() {
 	return this->totalBlockSize;
 }
 
-int MemoryBlock::getPosition()
-{
+int MemoryBlock::getPosition() {
 	return this->position;
 }
 
-void MemoryBlock::setOccupedSize(int newO)
-{
+void MemoryBlock::setOccupedSize(int newO) {
 	this->occupedSize = newO;
 }
 
-MemoryBlock* MemoryBlock::getNextFreeBlock()
-{
+MemoryBlock* MemoryBlock::getNextFreeBlock() {
 	return this->nextFreeBlock;
 }

@@ -1,7 +1,6 @@
 #include "Scheduler.h"
 
-Scheduler::Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu, MemoryManager* memoryManager)
-{
+Scheduler::Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu, MemoryManager* memoryManager) {
 	this->memoryManager = memoryManager;
 	this->cpu = cpu;
 	this->algorithm = algotithm;
@@ -9,8 +8,7 @@ Scheduler::Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu, Mem
 	qtd_cores = cores;
 }
 
-void Scheduler::insert_process(Process* newProcess, bool isNew)
-{	
+void Scheduler::insert_process(Process* newProcess, bool isNew) {	
 	bool wasCreated = true;
 	if (isNew) {
 		wasCreated = newProcess->generateRandomMemory(true);
@@ -20,22 +18,18 @@ void Scheduler::insert_process(Process* newProcess, bool isNew)
 
 		if (algorithm == Algorithms::sjf) {
 			insertOnSort(newProcess);
-		}
-		else {
+		} else {
 			ready_queue.push_back(newProcess);
 		}
-	}
-	else {
+	} else {
 		newProcess->abortProcess();
 	}
 
 }
 
 
-void Scheduler::process_core_singlethread()
-{
-	while (true)
-	{
+void Scheduler::process_core_singlethread() {
+	while (true) {
 		cout << "---------------------------------------------------------------------------------" << endl;
 
 		cpu->printProcessos();
@@ -57,15 +51,13 @@ void Scheduler::process_core_singlethread()
 						core->reset_quantum();
 					}
 
-				}
-				else {
+				} else {
 					//Process* process = getCpuCoreProcess(core_position);
 					if (!wasAlocated || process->decrease_time(1) == 0)
 						deschedule_process(core_position, wasAlocated);
 				}
 			}
 		
-
 			if (cpu->coreIsEmpty(core_position)) {
 
 				if (ready_queue.size() > 0) {
@@ -74,19 +66,11 @@ void Scheduler::process_core_singlethread()
 
 				}
 			}
-
-		
-			
 		}
-
-
-		
 	}
-
 }
 
-void Scheduler::run()
-{
+void Scheduler::run() {
 	/*vector<thread> cores_thread;
 
 	for (int i = 0; i < qtd_cores; i++)
@@ -98,8 +82,7 @@ void Scheduler::run()
 	singlethread.join();
 }
 
-void Scheduler::printReadyQueue()
-{
+void Scheduler::printReadyQueue() {
 	if (printing == false) {
 		printing = true;
 		cout << "A: ";
@@ -115,18 +98,15 @@ void Scheduler::printReadyQueue()
 
 
 
-list<Process*> Scheduler::get_queue()
-{
+list<Process*> Scheduler::get_queue() {
 	return list<Process*>();
 }
 
-void Scheduler::insertOnSort(Process* new_process)
-{
+void Scheduler::insertOnSort(Process* new_process) {
 	int key = 0;
 	list<Process*>::iterator it = ready_queue.begin();
 
-	for (Process* process : ready_queue)
-	{
+	for (Process* process : ready_queue) {
 		if (process->get_total_time() > new_process->get_total_time())
 			break;
 		else
@@ -137,23 +117,19 @@ void Scheduler::insertOnSort(Process* new_process)
 	ready_queue.insert(it, new_process);
 }
 
-void Scheduler::setCpuCore(int position, Process* process)
-{
+void Scheduler::setCpuCore(int position, Process* process) {
 	this->cpu->getCores()[position]->setProcess(process);
 }
 
-Process* Scheduler::getCpuCoreProcess(int position)
-{
+Process* Scheduler::getCpuCoreProcess(int position) {
 	return this->cpu->getCores()[position]->getProcess();
 }
 
-Core* Scheduler::getCpuCore(int position)
-{
+Core* Scheduler::getCpuCore(int position) {
 	return this->cpu->getCores()[position];
 }
 
-void Scheduler::schedule_process(int position)
-{
+void Scheduler::schedule_process(int position) {
 	if (ready_queue.size() > 0) {
 
 		Process* aux = this->ready_queue.front();
@@ -164,8 +140,7 @@ void Scheduler::schedule_process(int position)
 	}
 }
 
-void Scheduler::deschedule_process(int position, bool wasTerminated)
-{
+void Scheduler::deschedule_process(int position, bool wasTerminated) {
 	Process* process = getCpuCoreProcess(position);
 	cpu->getCore(position)->setProcess(NULL);
 
@@ -173,14 +148,11 @@ void Scheduler::deschedule_process(int position, bool wasTerminated)
 		if (process->get_remaining_time() > 0) {
 			process->set_state(Process::States::ready);
 			insert_process(process, false);
-		}
-		else {
+		} else {
 			process->freeMemoryPointers();
 			process->set_state(Process::States::terminated);
 		}
-	}
-	else
-	{
+	} else {
 		cout << "Abort: " << process->get_process_id() << endl;
 
  		process->abortProcess();

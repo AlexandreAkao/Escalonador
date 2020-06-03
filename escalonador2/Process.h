@@ -29,7 +29,6 @@ public:
 	int getTotalMemory();
 	bool generateRandomMemory(bool isStatic);
 	void abortProcess();
-
 	void freeMemoryPointers();
 
 
@@ -43,7 +42,5 @@ private:
 	States state;
 	MemoryManager* memoryManager;
 	//Kernel* kernel;
-	vector< MemoryBlock*> memoryPointers;
-	
-
+	vector<MemoryBlock*> memoryPointers;
 };
