@@ -40,5 +40,6 @@ private:
 	int memoryStaticOverhead;
 	int minimumAmountCalls;
 	int freeMemoryLen = 0;
+	MemoryManager::Algorithms alg;
 };
 

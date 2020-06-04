@@ -1,4 +1,5 @@
 #include "MemoryManager.h"
+#include <limits>
 
 MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int minimumAmountCalls) {
 	this->totalMemory = totalMemory;
@@ -10,22 +11,46 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	this->availableMemory = totalMemory;
 	this->occupiedMemory = 0;
 	this->memoryStaticOverhead = 16;
+	this->alg = alg;
 }
 
 MemoryBlock* MemoryManager::malloc(int memoryNeeded) {
 	MemoryBlock* mbAux = this->headFreeBlockList;
 	this->occupiedMemory += memoryNeeded;
 
+	MemoryBlock* bestBlock = nullptr;
+	int bestBlockValue = numeric_limits<int>::max();
+
+
 	while (mbAux != nullptr) {
 		if (mbAux->getTotalBlockSize() >= memoryNeeded) {
-			this->calculateAvaibleMemory();
-			this->removeBlock(mbAux);
-			this->freeMemoryLen--;
-			mbAux->setOccupedSize(memoryNeeded);
-			return mbAux;
+			if (this->alg == MemoryManager::Algorithms::first_fit) {
+				this->calculateAvaibleMemory();
+				this->removeBlock(mbAux);
+				this->freeMemoryLen--;
+				mbAux->setOccupedSize(memoryNeeded);
+				return mbAux;
+				
+			}
+			else if (this->alg == MemoryManager::Algorithms::best_fit) {
+				int difference = mbAux->getTotalBlockSize() - memoryNeeded;
+				if(difference <= bestBlockValue) {
+					bestBlock = mbAux;
+					bestBlockValue = difference;
+				}
+			}
 		}
+		
 		mbAux = mbAux->getNextFreeBlock();
 
+	}
+
+	if (this->alg == MemoryManager::Algorithms::best_fit && bestBlock != nullptr) {
+		this->calculateAvaibleMemory();
+		this->removeBlock(bestBlock);
+		this->freeMemoryLen--;
+		bestBlock->setOccupedSize(memoryNeeded);
+		return bestBlock;
 	}
 
 	this->memoryOverhead += this->memoryStaticOverhead;
@@ -37,6 +62,8 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded) {
 
 	return newMb;
 }
+
+
 
 bool MemoryManager::checkFreeMemory(int memoryNeeded)
 {
