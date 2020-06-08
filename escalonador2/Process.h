@@ -14,6 +14,8 @@ public:
 		ready, running, terminated, aborted
 	};
 
+
+
 	Process(int process_id, int total_time, States state, MemoryManager* memoryManager);
 
 	void printProcess();
@@ -37,8 +39,8 @@ private:
 	int process_id;
 	int total_time;
 	int remaining_time;
-
 	int totalMemory = 0;
+
 	States state;
 	MemoryManager* memoryManager;
 	//Kernel* kernel;

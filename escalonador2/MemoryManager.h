@@ -23,12 +23,37 @@ public:
 	void showStatus();
 
 
+
+
 private:
+	struct QuickfeetFreeBlocksItem {
+		int value;
+		int len;
+		MemoryBlock* head;
+		MemoryBlock* tail;
+	};
+
 	void calculateAvaibleMemory();
 
-	void removeBlock(MemoryBlock* mb);
+	MemoryBlock* malloc(int memoryNeeded, QuickfeetFreeBlocksItem item);
+
+	void removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem item);
+
+	struct MemoryBlockFrequency {
+		int value;
+		int qtd;
+	};
 
 
+
+
+
+	bool compareByLength(const MemoryBlockFrequency& a, const MemoryBlockFrequency& b);
+
+	void checkStatisticsTable(int value);
+
+	vector<MemoryBlockFrequency> statisticsTable;
+	vector<QuickfeetFreeBlocksItem> quickfeetFreeBlocksList;
 	vector<MemoryBlock*> memory;
 	MemoryBlock* headFreeBlockList;
 	MemoryBlock* tailFreeBlockList;
@@ -39,6 +64,7 @@ private:
 	int occupiedMemory;
 	int memoryStaticOverhead;
 	int minimumAmountCalls;
+	int minimumAmountCallsCounter;
 	int freeMemoryLen = 0;
 	MemoryManager::Algorithms alg;
 };
