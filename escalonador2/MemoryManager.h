@@ -44,6 +44,7 @@ private:
 	bool compareByLength2(MemoryBlockFrequency a, MemoryBlockFrequency b);
 	void checkStatisticsTable(int value);
 	void createQuickfeetBlock();
+	void resetQuickfeetBlock();
 
 	vector<MemoryBlockFrequency> statisticsTable;
 	vector<QuickfeetFreeBlocksItem> quickfeetFreeBlocksList;
@@ -59,7 +60,7 @@ private:
 	int minimumAmountCalls;
 	int minimumAmountCallsCounter;
 	int freeMemoryLen = 0;
-	int totalAuxListQuickFeet = 4;
+	int totalAuxListQuickFeet;
 
 	QuickfeetFreeBlocksItem freeList;
 	MemoryManager::Algorithms alg;

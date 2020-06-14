@@ -13,6 +13,8 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	this->availableMemory = totalMemory;
 	this->occupiedMemory = 0;
 	this->memoryStaticOverhead = 16;
+	this->totalAuxListQuickFeet = 4;
+
 	this->alg = alg;
 
 	this->freeList.head = nullptr;
@@ -22,7 +24,18 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	this->freeList.total = totalMemory;
 	this->freeList.len = 0;
 	this->freeList.occupiedMemory = 0;
+
+	if (alg == MemoryManager::Algorithms::quick_fit) {
+		for (int i = 0; i < this->totalAuxListQuickFeet; i++) {
+			QuickfeetFreeBlocksItem nb;
+			nb.value = -1;
+			nb.len = 0;
+			this->quickfeetFreeBlocksList.push_back(nb);
+		}
+	}
 }
+
+
 
 MemoryManager::QuickfeetFreeBlocksItem& MemoryManager::findFreeBlock(int qtdNeeded) {
 	for (QuickfeetFreeBlocksItem qfb : this->quickfeetFreeBlocksList) {
@@ -288,6 +301,80 @@ void MemoryManager::checkStatisticsTable(int value) {
 
 void MemoryManager::createQuickfeetBlock() {
 
+	if (this->minimumAmountCallsCounter != this->minimumAmountCalls) {
+		return;
+	}
+	this->minimumAmountCallsCounter = 0;
+
+	MemoryBlock* auxMb = this->freeList.head;
+
+	for (int i = 0; i < this->totalAuxListQuickFeet; i++) {
+		this->quickfeetFreeBlocksList.at(i).value = this->statisticsTable.at(i).value;
+	}
+
+	while (auxMb != nullptr) {
+		MemoryBlock* nextAuxMb = auxMb->getNextFreeBlock();
+
+		for (int i = 0; i < this->totalAuxListQuickFeet; i++) {
+			if (auxMb->getTotalBlockSize() == this->statisticsTable.at(i).value) {
+				this->removeBlock(auxMb, this->freeList);
+
+				if (this->quickfeetFreeBlocksList.at(i).head == nullptr) {
+
+					this->quickfeetFreeBlocksList.at(i).head = auxMb;
+					this->quickfeetFreeBlocksList.at(i).tail = auxMb;
+				}
+				else {
+					this->quickfeetFreeBlocksList.at(i).tail->setNextFreeBlock(auxMb);
+					this->quickfeetFreeBlocksList.at(i).tail = auxMb;
+				}
+
+				break;
+			}
+	
+		}
+
+		auxMb = nextAuxMb;
+	}
+
+
+
+}
+
+void MemoryManager::resetQuickfeetBlock()
+{
+	if (this->quickfeetFreeBlocksList.at(0).value == -1) {
+		return;
+	}
+
+	for (int i = 0; i < this->totalAuxListQuickFeet; i++) {
+		MemoryBlock* aux =  this->quickfeetFreeBlocksList.at(i).head;
+
+		while (aux != nullptr) {
+			MemoryBlock* nextAuxMb = aux->getNextFreeBlock();
+
+			this->removeBlock(aux, this->quickfeetFreeBlocksList.at(i));
+
+			if (this->freeList.head == nullptr) {
+				this->freeList.head = aux;
+				this->freeList.tail = aux;
+			}
+			else {
+				this->freeList.tail->setNextFreeBlock(aux);
+				this->freeList.tail = aux;
+			}
+
+			aux = nextAuxMb;
+		}
+
+		QuickfeetFreeBlocksItem nb;
+		nb.value = -1;
+		nb.len = 0;
+
+		this->quickfeetFreeBlocksList.at(i) = nb;
+		
+		//this->freeList.occupiedMemory += this->quickfeetFreeBlocksList.at(i).occupiedMemory;
+	}
 }
 
 void MemoryManager::showStatus() {
