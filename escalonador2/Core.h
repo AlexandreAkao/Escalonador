@@ -2,8 +2,7 @@
 #pragma once
 
 
-class Core
-{
+class Core {
 private:
 	Process* process;
 	int position;

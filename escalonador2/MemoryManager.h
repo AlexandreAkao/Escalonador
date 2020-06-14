@@ -5,27 +5,18 @@
 
 using namespace std;
 #pragma once
-class MemoryManager
-{
+class MemoryManager {
 public:
-	enum class Algorithms
-	{
+	enum class Algorithms {
 		first_fit, best_fit, quick_fit
 	};
-
+	
 	MemoryManager(MemoryManager::Algorithms alg ,int totalMemory, int minimumAmountCalls);
-
 	MemoryBlock* malloc(int memoryNeeded);
-
 	bool checkFreeMemory(int memoryNeeded);
-
 	void free(MemoryBlock* position);
-
 	void showStatus();
-
 	void showEmptyListsStatus();
-
-
 private:
 	struct QuickfeetFreeBlocksItem {
 		int value;
@@ -43,22 +34,16 @@ private:
 	};
 
 	void printEmptyList(QuickfeetFreeBlocksItem& list);
-
 	void calculateAvaibleMemory(QuickfeetFreeBlocksItem& list);
-
 	bool checkFreeMemory(int memoryNeeded, QuickfeetFreeBlocksItem& list);
 	void free(MemoryBlock* position, QuickfeetFreeBlocksItem& list);
-
 	QuickfeetFreeBlocksItem& findFreeBlock(int qtdNeedes);
 	MemoryBlock* malloc(int memoryNeeded, QuickfeetFreeBlocksItem &list);
-
 	void removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem& list);
-
-
-
 	bool compareByLength(const MemoryBlockFrequency& a, const MemoryBlockFrequency& b);
-
+	bool compareByLength2(MemoryBlockFrequency a, MemoryBlockFrequency b);
 	void checkStatisticsTable(int value);
+	void createQuickfeetBlock();
 
 	vector<MemoryBlockFrequency> statisticsTable;
 	vector<QuickfeetFreeBlocksItem> quickfeetFreeBlocksList;
@@ -74,6 +59,7 @@ private:
 	int minimumAmountCalls;
 	int minimumAmountCallsCounter;
 	int freeMemoryLen = 0;
+	int totalAuxListQuickFeet = 4;
 
 	QuickfeetFreeBlocksItem freeList;
 	MemoryManager::Algorithms alg;

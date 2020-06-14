@@ -15,7 +15,6 @@ void Scheduler::insert_process(Process* newProcess, bool isNew) {
 	}
 	
  	if (wasCreated) {
-
 		if (algorithm == Algorithms::sjf) {
 			insertOnSort(newProcess);
 		} else {
@@ -24,7 +23,6 @@ void Scheduler::insert_process(Process* newProcess, bool isNew) {
 	} else {
 		newProcess->abortProcess();
 	}
-
 }
 
 

@@ -41,14 +41,12 @@ public:
 		list<processAux> lista_process = batch_process_init(nmbProcess);
 		thread kernelThread(&Simulador::run, this, lista_process);
 		thread addingProcessThread(&Simulador::addNewProcess, this);
-
 		kernelThread.join();
 		addingProcessThread.join();
 	}
 
 	void run(list<processAux> lista_process) {
 		kernel = new Kernel(quantum, processor_cores_number, alg, mAlg, minimumAmountCalls, totalMemory);
-
 		for (processAux aux : lista_process)
 			kernel->create_process(aux.id, aux.lifeTime, aux.state);
 		kernel->run();
@@ -60,7 +58,7 @@ public:
 		idTraker++;
 		newProcess.lifeTime = rand() % 20 + 1;
 		newProcess.state = Process::States::ready;
-
+		
 		return newProcess;
 	}
 
@@ -69,7 +67,6 @@ public:
 			if (kernel != NULL) {
 				this_thread::sleep_for(chrono::seconds(4));
 				processAux newProcess = create_random_process();
-
 				kernel->create_process(newProcess.id, newProcess.lifeTime, newProcess.state);
 			}
 		}
@@ -77,7 +74,6 @@ public:
 
 	list<processAux> batch_process_init(int nmbProcess) {
 		list<processAux> processInitList;
-
 		for (int i = 0; i < nmbProcess; i++)
 			processInitList.push_back(create_random_process());
 
@@ -90,13 +86,11 @@ int main() {
 	srand(time(NULL));
  	Scheduler::Algorithms alg = Scheduler::Algorithms::round_robin;
 	MemoryManager::Algorithms mAlg = MemoryManager::Algorithms::first_fit;
-
 	int quantum = 2;
 	int processor_cores_number = 2;
 	int nmbProcess = 10;
 	int minimumAmountCalls = 10;
 	int totalMemory = 6000;
-
 	Simulador* simulador = new Simulador(quantum, processor_cores_number, nmbProcess, alg, mAlg, minimumAmountCalls, totalMemory);
 
 	simulador->start();

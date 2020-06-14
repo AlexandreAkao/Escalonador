@@ -10,8 +10,7 @@
 
 #pragma once
 
-class Kernel
-{
+class Kernel {
 public:
 	Kernel(int quantum, int processor_cores_number, Scheduler::Algorithms algorithm, MemoryManager::Algorithms mAlg,int minimumAmountCalls, int totalMemory);
 	~Kernel();

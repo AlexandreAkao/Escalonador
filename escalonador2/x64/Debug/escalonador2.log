@@ -1,4 +1,6 @@
 ﻿  MemoryManager.cpp
-D:\Codes\c++\Escalonador\escalonador2\MemoryManager.cpp(100,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-D:\Codes\c++\Escalonador\escalonador2\MemoryManager.cpp(32): warning C4172: returning address of local variable or temporary: qfb
-  escalonador2.vcxproj -> D:\Codes\c++\Escalonador\x64\Debug\escalonador2.exe
+F:\Projetos\Faculdade\Escalonador\escalonador2\MemoryManager.cpp(98,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Process.cpp
+  Generating Code...
+F:\Projetos\Faculdade\Escalonador\escalonador2\MemoryManager.cpp(30): warning C4172: returning address of local variable or temporary: qfb
+  escalonador2.vcxproj -> F:\Projetos\Faculdade\Escalonador\x64\Debug\escalonador2.exe

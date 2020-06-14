@@ -8,11 +8,9 @@
 #include "MemoryManager.h" 
 
 #pragma once
-class Scheduler
-{
+class Scheduler {
 public:
-	enum class Algorithms
-	{
+	enum class Algorithms {
 		fifo, sjf, round_robin
 	};
 
@@ -21,7 +19,6 @@ public:
  	void process_core_singlethread();
 	void run();
 	void printReadyQueue();
-
 	list<Process*> get_queue();
 private:
 	int quantum;
@@ -31,8 +28,6 @@ private:
 	int qtd_cores;
 	bool printing = false;
 	MemoryManager* memoryManager;
-	
-
 	void insertOnSort(Process* new_process);
 	void setCpuCore(int position, Process* process);
 	Process* getCpuCoreProcess(int position);

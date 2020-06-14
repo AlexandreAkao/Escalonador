@@ -3,8 +3,7 @@
 
 #pragma once
 
-class CPU
-{
+class CPU {
 private:
 	vector<Core*> cores;
 	int qtd_cores;

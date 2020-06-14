@@ -1,4 +1,5 @@
 #include "MemoryManager.h"
+#include <algorithm>
 #include <limits>
 
 MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int minimumAmountCalls) {
@@ -21,12 +22,9 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	this->freeList.total = totalMemory;
 	this->freeList.len = 0;
 	this->freeList.occupiedMemory = 0;
-
-
 }
 
-MemoryManager::QuickfeetFreeBlocksItem& MemoryManager::findFreeBlock(int qtdNeeded)
-{
+MemoryManager::QuickfeetFreeBlocksItem& MemoryManager::findFreeBlock(int qtdNeeded) {
 	for (QuickfeetFreeBlocksItem qfb : this->quickfeetFreeBlocksList) {
 		if (qtdNeeded == qfb.value) {
 			return qfb;
@@ -37,6 +35,7 @@ MemoryManager::QuickfeetFreeBlocksItem& MemoryManager::findFreeBlock(int qtdNeed
 }
 
 MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem &lista) {
+	this->checkStatisticsTable(memoryNeeded); //Fase de teste
 	MemoryBlock* mbAux = lista.head;
 	//if (item.value != QuickfeetFreeBlocksItem().value) {
 	//	mbAux = item.head;
@@ -82,7 +81,6 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem &li
 		}
 		
 		mbAux = mbAux->getNextFreeBlock();
-
 	}
 
 	if (this->alg == MemoryManager::Algorithms::best_fit && bestBlock != nullptr) {
@@ -105,9 +103,7 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem &li
 	return newMb;
 }
 
-
-MemoryBlock* MemoryManager::malloc(int memoryNeeded)
-{
+MemoryBlock* MemoryManager::malloc(int memoryNeeded) {
 	if (this->alg == MemoryManager::Algorithms::first_fit || this->alg == MemoryManager::Algorithms::best_fit) {
 		return this->malloc(memoryNeeded, this->freeList);
 	}
@@ -120,12 +116,10 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded)
 		else {
 			return this->malloc(memoryNeeded, this->freeList);
 		}
-
 	}
 }
 
-bool MemoryManager::checkFreeMemory(int memoryNeeded, QuickfeetFreeBlocksItem &list)
-{
+bool MemoryManager::checkFreeMemory(int memoryNeeded, QuickfeetFreeBlocksItem &list) {
 	if (list.available < memoryNeeded)
 		return false;
 	else {
@@ -145,13 +139,10 @@ bool MemoryManager::checkFreeMemory(int memoryNeeded, QuickfeetFreeBlocksItem &l
 			return true;
 		else
 			return false;
-
-
 	}
 }
 
-bool MemoryManager::checkFreeMemory(int memoryNeeded)
-{
+bool MemoryManager::checkFreeMemory(int memoryNeeded) {
 	if (this->alg == MemoryManager::Algorithms::first_fit || this->alg == MemoryManager::Algorithms::best_fit) {
 		return this->checkFreeMemory(memoryNeeded, this->freeList);
 	}
@@ -194,24 +185,20 @@ void MemoryManager::free(MemoryBlock* block, QuickfeetFreeBlocksItem &list) {
 	//this->freeMemoryLen++;
 }
 
-void MemoryManager::free(MemoryBlock* block)
-{
+void MemoryManager::free(MemoryBlock* block) {
 	if (this->alg == MemoryManager::Algorithms::first_fit || this->alg == MemoryManager::Algorithms::best_fit) {
 		this->free(block, this->freeList);
-	}
-	else {
+	} else {
 		QuickfeetFreeBlocksItem& list = this->findFreeBlock(block->getTotalBlockSize());
 
 		this->free(block, list);
 	}
 }
 
-
 void MemoryManager::calculateAvaibleMemory(QuickfeetFreeBlocksItem &list) {
 	list.available = list.total - list.len * this->memoryStaticOverhead - list.occupiedMemory;
 	//this->availableMemory = this->totalMemory - this->memoryOverhead - this->occupiedMemory;
 }
-
 
 void MemoryManager::removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem &item) {
 	MemoryBlock* head = nullptr;
@@ -270,19 +257,23 @@ void MemoryManager::removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem &item) 
 
 }
 
-bool MemoryManager::compareByLength(const MemoryBlockFrequency& a, const MemoryBlockFrequency& b)
-
-{
+bool MemoryManager::compareByLength(const MemoryBlockFrequency& a, const MemoryBlockFrequency& b) {
 	return a.qtd > b.qtd;
 }
 
-void MemoryManager::checkStatisticsTable(int value)
-{
+bool MemoryManager::compareByLength2(MemoryBlockFrequency a, MemoryBlockFrequency b) {
+	return a.qtd > b.qtd;
+}
+
+void MemoryManager::checkStatisticsTable(int value) {
 	bool key = true;
-	for (MemoryBlockFrequency mbf : this->statisticsTable) {
+	for (MemoryBlockFrequency &mbf : this->statisticsTable) {
 		if (value == mbf.value) {
 			mbf.qtd++;
 			key = false;
+			sort(this->statisticsTable.begin(), this->statisticsTable.end(), [](const MemoryBlockFrequency& a, const MemoryBlockFrequency& b) {
+				return a.qtd > b.qtd;
+			});
 			break;
 		}
 	}
@@ -293,19 +284,25 @@ void MemoryManager::checkStatisticsTable(int value)
 		newMbf.value = value;
 		this->statisticsTable.push_back(newMbf);
 	}
+}
+
+void MemoryManager::createQuickfeetBlock() {
 
 }
 
-
-
 void MemoryManager::showStatus() {
 	//cout << "T: " << this->totalMemory << " ,A: " << this->availableMemory << " ,O: " << this->occupiedMemory << " ,Ov " << this->memoryOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeMemoryLen<< endl;
+	
+	cout << "Sort: [";
+	for (unsigned i = 0; i < statisticsTable.size(); i++)
+		cout << "{" << statisticsTable.at(i).qtd << "|" << statisticsTable.at(i).value << "}, ";
+	cout << "]" << endl;
+
 
 	cout << "T: " << this->freeList.total << " ,A: " << this->freeList.available << " ,O: " << this->freeList.occupiedMemory << " ,Ov " << this->freeList.len * this->memoryStaticOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeList.len << endl;
 }
 
-void MemoryManager::showEmptyListsStatus()
-{
+void MemoryManager::showEmptyListsStatus() {
 	this->printEmptyList(this->freeList);
 	if (this->quickfeetFreeBlocksList.size() > 0) {
 		for (QuickfeetFreeBlocksItem list : this->quickfeetFreeBlocksList) {
@@ -314,15 +311,14 @@ void MemoryManager::showEmptyListsStatus()
 	}
 }
 
-void MemoryManager::printEmptyList(QuickfeetFreeBlocksItem& list)
-{
+void MemoryManager::printEmptyList(QuickfeetFreeBlocksItem& list) {
 	MemoryBlock* aux = list.head;
 	cout << "Lv: " << list.value << " , Sz: " << list.len <<" [ ";
-	while (aux != nullptr)
-	{
+	while (aux != nullptr) {
 		cout << aux->getTotalBlockSize() << " ,";
 		aux = aux->getNextFreeBlock();
 	}
 
 	cout << " ]" << endl;
 }
+
