@@ -32,8 +32,9 @@ void Scheduler::process_core_singlethread() {
 	while (true) {
 		cout << "---------------------------------------------------------------------------------" << endl;
 
-		cpu->printProcessos();
+		this->memoryManager->showEmptyListsStatus();
 		this->memoryManager->showStatus();
+		cpu->printProcessos();
 		printReadyQueue();
 
 		this_thread::sleep_for(chrono::seconds(1));

@@ -13,19 +13,41 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	this->occupiedMemory = 0;
 	this->memoryStaticOverhead = 16;
 	this->alg = alg;
+
+	this->freeList.head = nullptr;
+	this->freeList.tail = nullptr;
+	this->freeList.value = -1;
+	this->freeList.available = totalMemory;
+	this->freeList.total = totalMemory;
+	this->freeList.len = 0;
+	this->freeList.occupiedMemory = 0;
+
+
 }
 
-MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem item) {
-	MemoryBlock* mbAux = nullptr;
-	if (item.value != QuickfeetFreeBlocksItem().value) {
-		mbAux = item.head;
+MemoryManager::QuickfeetFreeBlocksItem& MemoryManager::findFreeBlock(int qtdNeeded)
+{
+	for (QuickfeetFreeBlocksItem qfb : this->quickfeetFreeBlocksList) {
+		if (qtdNeeded == qfb.value) {
+			return qfb;
+		}
 	}
-	else
-	{
-		mbAux = this->headFreeBlockList;
-	}
-	this->occupiedMemory += memoryNeeded;
 
+	return this->freeList;
+}
+
+MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem &lista) {
+	MemoryBlock* mbAux = lista.head;
+	//if (item.value != QuickfeetFreeBlocksItem().value) {
+	//	mbAux = item.head;
+	//}
+	//else
+	//{
+	//	mbAux = this->headFreeBlockList;
+	//}
+	//this->occupiedMemory += memoryNeeded;
+
+	lista.occupiedMemory +=  memoryNeeded;
 	MemoryBlock* bestBlock = nullptr;
 	int bestBlockValue = numeric_limits<int>::max();
 
@@ -36,16 +58,16 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem ite
 	while (mbAux != nullptr) {
 		if (mbAux->getTotalBlockSize() >= memoryNeeded) {
 			if (this->alg == MemoryManager::Algorithms::first_fit || this->alg == MemoryManager::Algorithms::quick_fit) {
-				this->calculateAvaibleMemory();
-				this->removeBlock(mbAux, item);
-				if (item.value != QuickfeetFreeBlocksItem().value) {
-					item.len--;
+				this->calculateAvaibleMemory(lista);
+				this->removeBlock(mbAux, lista);
+			/*	if (lista.value != QuickfeetFreeBlocksItem().value) {
+					lista.len--;
 				}
 				else
 				{
 					this->freeMemoryLen--;
-				}
-
+				}*/
+				lista.len--;
 				mbAux->setOccupedSize(memoryNeeded);
 				return mbAux;
 				
@@ -64,9 +86,11 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem ite
 	}
 
 	if (this->alg == MemoryManager::Algorithms::best_fit && bestBlock != nullptr) {
-		this->calculateAvaibleMemory();
-		this->removeBlock(bestBlock, item);
-		this->freeMemoryLen--;
+		this->calculateAvaibleMemory(lista);
+		this->removeBlock(bestBlock, lista);
+		//this->freeMemoryLen--;
+		lista.len--;
+
 		bestBlock->setOccupedSize(memoryNeeded);
 		return bestBlock;
 	}
@@ -76,7 +100,7 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem ite
 	int position = this->memory.size();
 	MemoryBlock* newMb = new MemoryBlock(memoryNeeded, memoryNeeded, position);
 	this->memory.push_back(newMb);
-	this->calculateAvaibleMemory();
+	this->calculateAvaibleMemory(lista);
 
 	return newMb;
 }
@@ -85,20 +109,28 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem ite
 MemoryBlock* MemoryManager::malloc(int memoryNeeded)
 {
 	if (this->alg == MemoryManager::Algorithms::first_fit || this->alg == MemoryManager::Algorithms::best_fit) {
-		return this->malloc(memoryNeeded, QuickfeetFreeBlocksItem());
+		return this->malloc(memoryNeeded, this->freeList);
 	}
 	else {
-		return nullptr;
+
+		QuickfeetFreeBlocksItem& list = this->findFreeBlock(memoryNeeded);
+		if (list.len > 0) {
+			return this->malloc(memoryNeeded, list);
+		}
+		else {
+			return this->malloc(memoryNeeded, this->freeList);
+		}
 
 	}
 }
 
-bool MemoryManager::checkFreeMemory(int memoryNeeded)
+bool MemoryManager::checkFreeMemory(int memoryNeeded, QuickfeetFreeBlocksItem &list)
 {
-	if (this->availableMemory < memoryNeeded)
+	if (list.available < memoryNeeded)
 		return false;
 	else {
-		MemoryBlock* mb_aux = this->headFreeBlockList;
+		MemoryBlock* mb_aux = list.head;
+			//this->headFreeBlockList;
 		int avaibleInMemoryBlock = 0;
 		while (mb_aux != nullptr) {
 			if (mb_aux->getTotalBlockSize() >= memoryNeeded) {
@@ -109,7 +141,7 @@ bool MemoryManager::checkFreeMemory(int memoryNeeded)
 			mb_aux = mb_aux->getNextFreeBlock();
 		}
 
-		if (this->availableMemory - avaibleInMemoryBlock >= memoryNeeded)
+		if (list.available - avaibleInMemoryBlock >= memoryNeeded)
 			return true;
 		else
 			return false;
@@ -118,35 +150,73 @@ bool MemoryManager::checkFreeMemory(int memoryNeeded)
 	}
 }
 
-void MemoryManager::free(MemoryBlock* block) {
+bool MemoryManager::checkFreeMemory(int memoryNeeded)
+{
+	if (this->alg == MemoryManager::Algorithms::first_fit || this->alg == MemoryManager::Algorithms::best_fit) {
+		return this->checkFreeMemory(memoryNeeded, this->freeList);
+	}
+	else {
+		QuickfeetFreeBlocksItem& list = this->findFreeBlock(memoryNeeded);
+		if (list.value == -1) {
+			return this->checkFreeMemory(memoryNeeded, list);
+		}
+		else {
+			bool result = this->checkFreeMemory(memoryNeeded, list);
+			if (!result) {
+				return this->checkFreeMemory(memoryNeeded, this->freeList);
+			}
+			else {
+				return result;
+			}
+		}
+
+	}
+ }
+
+void MemoryManager::free(MemoryBlock* block, QuickfeetFreeBlocksItem &list) {
  	int occupedSize = block->getOccupedSize();
-	this->occupiedMemory -= occupedSize;
+	//this->occupiedMemory -= occupedSize;
+	list.occupiedMemory -= occupedSize;
 	block->resetOccupedSize();
 
-	this->calculateAvaibleMemory();
+	this->calculateAvaibleMemory(list);
 	//block->resetOccupedSize();
 
-	if (headFreeBlockList == nullptr) {
-		headFreeBlockList = block;
-		tailFreeBlockList = block;
+	if (list.head == nullptr) {
+		list.head = block;
+		list.tail = block;
 	} else {
-		this->tailFreeBlockList->setNextFreeBlock(block);
-		this->tailFreeBlockList = block;
+		list.tail->setNextFreeBlock(block);
+		list.tail = block;
 	}
 
-	this->freeMemoryLen++;
+	list.len++;
+	//this->freeMemoryLen++;
 }
 
-void MemoryManager::calculateAvaibleMemory() {
-	this->availableMemory = this->totalMemory - this->memoryOverhead - this->occupiedMemory;
+void MemoryManager::free(MemoryBlock* block)
+{
+	if (this->alg == MemoryManager::Algorithms::first_fit || this->alg == MemoryManager::Algorithms::best_fit) {
+		this->free(block, this->freeList);
+	}
+	else {
+		QuickfeetFreeBlocksItem& list = this->findFreeBlock(block->getTotalBlockSize());
+
+		this->free(block, list);
+	}
 }
 
 
-void MemoryManager::removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem item) {
+void MemoryManager::calculateAvaibleMemory(QuickfeetFreeBlocksItem &list) {
+	list.available = list.total - list.len * this->memoryStaticOverhead - list.occupiedMemory;
+	//this->availableMemory = this->totalMemory - this->memoryOverhead - this->occupiedMemory;
+}
+
+
+void MemoryManager::removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem &item) {
 	MemoryBlock* head = nullptr;
 	MemoryBlock* tail = nullptr;
-	bool mainList = true;
-	if (item.value != QuickfeetFreeBlocksItem().value) {
+	/*if (item.value != QuickfeetFreeBlocksItem().value) {
 		head = item.head;
 		tail = item.tail;
 		mainList = false;
@@ -155,28 +225,39 @@ void MemoryManager::removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem item) {
 	{
 		head = this->headFreeBlockList;
 		tail = this->tailFreeBlockList;
-	}
+	}*/
+
+	head = item.head;
+	tail = item.tail;
+
 
 	if (mb == head) {
 		//MemoryBlock* aux = mb->getNextFreeBlock();
-		if (mainList) {
+	/*	if (mainList) {
 			this->headFreeBlockList = mb->getNextFreeBlock();
 		}
 		else {
 			item.head = mb->getNextFreeBlock();
-		}
+		}*/
+
+		item.head = mb->getNextFreeBlock();
+
 	} else if (mb == tail) {
 		MemoryBlock* aux = head;
 		while (aux->getNextFreeBlock() != mb) {
 			aux = aux->getNextFreeBlock();
 		}
 		aux->setNextFreeBlock(nullptr);
-		if (mainList) {
+
+		/*if (mainList) {
 			this->headFreeBlockList = aux;
 		}
 		else {
 			item.head = aux;
-		}
+		}*/
+
+		item.tail = aux;
+
 	} else {
 		MemoryBlock* aux = head;
 		while (aux->getNextFreeBlock() != mb) {
@@ -215,6 +296,33 @@ void MemoryManager::checkStatisticsTable(int value)
 
 }
 
+
+
 void MemoryManager::showStatus() {
-	cout << "T: " << this->totalMemory << " ,A: " << this->availableMemory << " ,O: " << this->occupiedMemory << " ,Ov " << this->memoryOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeMemoryLen<< endl;
+	//cout << "T: " << this->totalMemory << " ,A: " << this->availableMemory << " ,O: " << this->occupiedMemory << " ,Ov " << this->memoryOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeMemoryLen<< endl;
+
+	cout << "T: " << this->freeList.total << " ,A: " << this->freeList.available << " ,O: " << this->freeList.occupiedMemory << " ,Ov " << this->freeList.len * this->memoryStaticOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeList.len << endl;
+}
+
+void MemoryManager::showEmptyListsStatus()
+{
+	this->printEmptyList(this->freeList);
+	if (this->quickfeetFreeBlocksList.size() > 0) {
+		for (QuickfeetFreeBlocksItem list : this->quickfeetFreeBlocksList) {
+			this->printEmptyList(list);
+		}
+	}
+}
+
+void MemoryManager::printEmptyList(QuickfeetFreeBlocksItem& list)
+{
+	MemoryBlock* aux = list.head;
+	cout << "Lv: " << list.value << " , Sz: " << list.len <<" [ ";
+	while (aux != nullptr)
+	{
+		cout << aux->getTotalBlockSize() << " ,";
+		aux = aux->getNextFreeBlock();
+	}
+
+	cout << " ]" << endl;
 }

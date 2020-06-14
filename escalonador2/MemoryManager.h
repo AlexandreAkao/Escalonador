@@ -20,31 +20,39 @@ public:
 	bool checkFreeMemory(int memoryNeeded);
 
 	void free(MemoryBlock* position);
+
 	void showStatus();
 
-
+	void showEmptyListsStatus();
 
 
 private:
 	struct QuickfeetFreeBlocksItem {
 		int value;
 		int len;
+		int available;
+		int total;
+		int occupiedMemory;
 		MemoryBlock* head;
 		MemoryBlock* tail;
 	};
-
-	void calculateAvaibleMemory();
-
-	MemoryBlock* malloc(int memoryNeeded, QuickfeetFreeBlocksItem item);
-
-	void removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem item);
 
 	struct MemoryBlockFrequency {
 		int value;
 		int qtd;
 	};
 
+	void printEmptyList(QuickfeetFreeBlocksItem& list);
 
+	void calculateAvaibleMemory(QuickfeetFreeBlocksItem& list);
+
+	bool checkFreeMemory(int memoryNeeded, QuickfeetFreeBlocksItem& list);
+	void free(MemoryBlock* position, QuickfeetFreeBlocksItem& list);
+
+	QuickfeetFreeBlocksItem& findFreeBlock(int qtdNeedes);
+	MemoryBlock* malloc(int memoryNeeded, QuickfeetFreeBlocksItem &list);
+
+	void removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem& list);
 
 
 
@@ -66,6 +74,8 @@ private:
 	int minimumAmountCalls;
 	int minimumAmountCallsCounter;
 	int freeMemoryLen = 0;
+
+	QuickfeetFreeBlocksItem freeList;
 	MemoryManager::Algorithms alg;
 };
 
