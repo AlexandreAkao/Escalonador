@@ -40,8 +40,6 @@ private:
 	QuickfeetFreeBlocksItem& findFreeBlock(int qtdNeedes);
 	MemoryBlock* malloc(int memoryNeeded, QuickfeetFreeBlocksItem &list);
 	void removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem& list);
-	bool compareByLength(const MemoryBlockFrequency& a, const MemoryBlockFrequency& b);
-	bool compareByLength2(MemoryBlockFrequency a, MemoryBlockFrequency b);
 	void checkStatisticsTable(int value);
 	void createQuickfeetBlock();
 	void resetQuickfeetBlock();

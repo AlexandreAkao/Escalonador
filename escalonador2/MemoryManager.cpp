@@ -207,7 +207,7 @@ void MemoryManager::free(MemoryBlock* block) {
 }
 
 void MemoryManager::calculateAvaibleMemory(QuickfeetFreeBlocksItem &list) {
-	list.available = list.total - list.len * this->memoryStaticOverhead - list.occupiedMemory;
+	list.available = list.total - this->memoryOverhead - list.occupiedMemory;
 	//this->availableMemory = this->totalMemory - this->memoryOverhead - this->occupiedMemory;
 }
 
@@ -265,14 +265,6 @@ void MemoryManager::removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem &item) 
 		aux->setNextFreeBlock(mb->getNextFreeBlock());
 	}
 	mb->setNextFreeBlock(nullptr);
-}
-
-bool MemoryManager::compareByLength(const MemoryBlockFrequency& a, const MemoryBlockFrequency& b) {
-	return a.qtd > b.qtd;
-}
-
-bool MemoryManager::compareByLength2(MemoryBlockFrequency a, MemoryBlockFrequency b) {
-	return a.qtd > b.qtd;
 }
 
 void MemoryManager::checkStatisticsTable(int value) {
@@ -371,15 +363,15 @@ void MemoryManager::resetQuickfeetBlock() {
 }
 
 void MemoryManager::showStatus() {
-	//cout << "T: " << this->totalMemory << " ,A: " << this->availableMemory << " ,O: " << this->occupiedMemory << " ,Ov " << this->memoryOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeMemoryLen<< endl;
 	
 	cout << "Sort: [";
 	for (unsigned i = 0; i < statisticsTable.size(); i++)
 		cout << "{" << statisticsTable.at(i).qtd << "|" << statisticsTable.at(i).value << "}, ";
 	cout << "]" << endl;
 
+	cout << "T: " << this->totalMemory << " ,A: " << this->freeList.available << " ,O: " << this->freeList.occupiedMemory << " ,Ov " << this->memoryOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeMemoryLen<< endl;
 
-	cout << "T: " << this->freeList.total << " ,A: " << this->freeList.available << " ,O: " << this->freeList.occupiedMemory << " ,Ov " << this->freeList.len * this->memoryStaticOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeList.len << endl;
+	//cout << "T: " << this->freeList.total << " ,A: " << this->freeList.available << " ,O: " << this->freeList.occupiedMemory << " ,Ov " << this->memoryOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeList.len << endl;
 }
 
 void MemoryManager::showEmptyListsStatus() {
