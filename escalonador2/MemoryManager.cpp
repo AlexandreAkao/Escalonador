@@ -207,7 +207,7 @@ void MemoryManager::free(MemoryBlock* block) {
 }
 
 void MemoryManager::calculateAvaibleMemory(QuickfeetFreeBlocksItem &list) {
-	list.available = list.total - this->memoryOverhead - list.occupiedMemory;
+	list.available = this->totalMemory - this->memoryOverhead - list.occupiedMemory;
 	//this->availableMemory = this->totalMemory - this->memoryOverhead - this->occupiedMemory;
 }
 
@@ -290,11 +290,6 @@ void MemoryManager::checkStatisticsTable(int value) {
 
 void MemoryManager::createQuickfeetBlock() {
 
-	if (this->minimumAmountCallsCounter != this->minimumAmountCalls) {
-		return;
-	}
-	this->minimumAmountCallsCounter = 0;
-
 	MemoryBlock* auxMb = this->freeList.head;
 
 	for (int i = 0; i < this->totalAuxListQuickFeet; i++) {
@@ -309,7 +304,9 @@ void MemoryManager::createQuickfeetBlock() {
 				this->removeBlock(auxMb, this->freeList);
 
 				this->quickfeetFreeBlocksList.at(i).available += auxMb->getTotalBlockSize();
+				this->freeList.available -= auxMb->getTotalBlockSize();
 				this->quickfeetFreeBlocksList.at(i).len++;
+				this->freeList.len --;
 
 				if (this->quickfeetFreeBlocksList.at(i).head == nullptr) {
 
@@ -338,6 +335,9 @@ void MemoryManager::resetQuickfeetBlock() {
 		while (aux != nullptr) {
 			MemoryBlock* nextAuxMb = aux->getNextFreeBlock();
 
+			this->freeList.available += aux->getTotalBlockSize();
+			this->freeList.len++;
+
 			this->removeBlock(aux, this->quickfeetFreeBlocksList.at(i));
 
 			if (this->freeList.head == nullptr) {
@@ -352,6 +352,8 @@ void MemoryManager::resetQuickfeetBlock() {
 			aux = nextAuxMb;
 		}
 
+
+
 		QuickfeetFreeBlocksItem nb;
 		nb.value = -1;
 		nb.len = 0;
@@ -364,6 +366,8 @@ void MemoryManager::resetQuickfeetBlock() {
 
 void MemoryManager::showStatus() {
 	
+	this->showEmptyListsStatus();
+
 	cout << "Sort: [";
 	for (unsigned i = 0; i < statisticsTable.size(); i++)
 		cout << "{" << statisticsTable.at(i).qtd << "|" << statisticsTable.at(i).value << "}, ";
@@ -375,11 +379,33 @@ void MemoryManager::showStatus() {
 }
 
 void MemoryManager::showEmptyListsStatus() {
+	cout << "bbbbbbb " << freeList.value << endl;
+
 	this->printEmptyList(this->freeList);
+	cout << "aaaaa " << freeList.value << endl;
 	if (this->quickfeetFreeBlocksList.size() > 0) {
 		for (QuickfeetFreeBlocksItem list : this->quickfeetFreeBlocksList) {
 			this->printEmptyList(list);
+
 		}
+	}
+}
+
+MemoryManager::Algorithms MemoryManager::getAlg()
+{
+	return this->alg;
+}
+
+void MemoryManager::verifyAndCreateAuxLists()
+{
+	if (this->minimumAmountCallsCounter != this->minimumAmountCalls) {
+		return;
+	}
+	else {
+		this->resetQuickfeetBlock();
+		this->minimumAmountCallsCounter = 0;
+		this->createQuickfeetBlock();
+
 	}
 }
 

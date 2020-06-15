@@ -29,7 +29,10 @@ void Scheduler::process_core_singlethread() {
 	while (true) {
 		cout << "---------------------------------------------------------------------------------" << endl;
 
-		this->memoryManager->showEmptyListsStatus();
+		if (this->memoryManager->getAlg() == MemoryManager::Algorithms::quick_fit) {
+			this->memoryManager->verifyAndCreateAuxLists();
+		}
+
 		this->memoryManager->showStatus();
 		cpu->printProcessos();
 		printReadyQueue();

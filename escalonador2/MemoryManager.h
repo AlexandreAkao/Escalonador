@@ -17,6 +17,9 @@ public:
 	void free(MemoryBlock* position);
 	void showStatus();
 	void showEmptyListsStatus();
+	MemoryManager::Algorithms getAlg();
+	void verifyAndCreateAuxLists();
+
 private:
 	struct QuickfeetFreeBlocksItem {
 		int value;

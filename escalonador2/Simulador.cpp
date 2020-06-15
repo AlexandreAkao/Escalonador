@@ -85,7 +85,7 @@ public:
 int main() {
 	srand(time(NULL));
  	Scheduler::Algorithms alg = Scheduler::Algorithms::round_robin;
-	MemoryManager::Algorithms mAlg = MemoryManager::Algorithms::first_fit;
+	MemoryManager::Algorithms mAlg = MemoryManager::Algorithms::quick_fit;
 	int quantum = 2;
 	int processor_cores_number = 2;
 	int nmbProcess = 10;
