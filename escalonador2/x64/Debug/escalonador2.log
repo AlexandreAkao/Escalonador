@@ -1,1 +1,4 @@
-﻿  escalonador2.vcxproj -> D:\Codes\c++\Escalonador\x64\Debug\escalonador2.exe
+﻿  MemoryManager.cpp
+F:\Projetos\Faculdade\Escalonador\escalonador2\MemoryManager.cpp(111,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+F:\Projetos\Faculdade\Escalonador\escalonador2\MemoryManager.cpp(43): warning C4172: returning address of local variable or temporary: qfb
+  escalonador2.vcxproj -> F:\Projetos\Faculdade\Escalonador\x64\Debug\escalonador2.exe

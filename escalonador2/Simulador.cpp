@@ -88,7 +88,7 @@ int main() {
 	MemoryManager::Algorithms mAlg = MemoryManager::Algorithms::quick_fit;
 	int quantum = 2;
 	int processor_cores_number = 2;
-	int nmbProcess = 10;
+	int nmbProcess = 6;
 	int minimumAmountCalls = 10;
 	int totalMemory = 6000;
 	Simulador* simulador = new Simulador(quantum, processor_cores_number, nmbProcess, alg, mAlg, minimumAmountCalls, totalMemory);

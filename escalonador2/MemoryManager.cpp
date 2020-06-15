@@ -30,6 +30,8 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 			QuickfeetFreeBlocksItem nb;
 			nb.value = -1;
 			nb.len = 0;
+			nb.head = nullptr;
+			nb.tail = nullptr;
 			this->quickfeetFreeBlocksList.push_back(nb);
 		}
 	}
@@ -357,6 +359,8 @@ void MemoryManager::resetQuickfeetBlock() {
 		QuickfeetFreeBlocksItem nb;
 		nb.value = -1;
 		nb.len = 0;
+		nb.head = nullptr;
+		nb.tail = nullptr;
 
 		this->quickfeetFreeBlocksList.at(i) = nb;
 
@@ -379,11 +383,8 @@ void MemoryManager::showStatus() {
 }
 
 void MemoryManager::showEmptyListsStatus() {
-	cout << "bbbbbbb " << freeList.value << endl;
-
 	this->printEmptyList(this->freeList);
-	cout << "aaaaa " << freeList.value << endl;
-	if (this->quickfeetFreeBlocksList.size() > 0) {
+	if (this->quickfeetFreeBlocksList.at(0).value != -1) {
 		for (QuickfeetFreeBlocksItem list : this->quickfeetFreeBlocksList) {
 			this->printEmptyList(list);
 
@@ -391,8 +392,7 @@ void MemoryManager::showEmptyListsStatus() {
 	}
 }
 
-MemoryManager::Algorithms MemoryManager::getAlg()
-{
+MemoryManager::Algorithms MemoryManager::getAlg() {
 	return this->alg;
 }
 
