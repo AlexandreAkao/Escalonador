@@ -25,7 +25,6 @@ void Scheduler::insert_process(Process* newProcess, bool isNew) {
 	}
 }
 
-
 void Scheduler::process_core_singlethread() {
 	while (true) {
 		cout << "---------------------------------------------------------------------------------" << endl;
@@ -93,8 +92,6 @@ void Scheduler::printReadyQueue() {
 		printing = false;
 	}
 }
-
-
 
 list<Process*> Scheduler::get_queue() {
 	return list<Process*>();

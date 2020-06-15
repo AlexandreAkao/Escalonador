@@ -35,8 +35,6 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	}
 }
 
-
-
 MemoryManager::QuickfeetFreeBlocksItem& MemoryManager::findFreeBlock(int qtdNeeded) {
 	for (QuickfeetFreeBlocksItem qfb : this->quickfeetFreeBlocksList) {
 		if (qtdNeeded == qfb.value) {
@@ -267,7 +265,6 @@ void MemoryManager::removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem &item) 
 		aux->setNextFreeBlock(mb->getNextFreeBlock());
 	}
 	mb->setNextFreeBlock(nullptr);
-
 }
 
 bool MemoryManager::compareByLength(const MemoryBlockFrequency& a, const MemoryBlockFrequency& b) {
@@ -319,6 +316,9 @@ void MemoryManager::createQuickfeetBlock() {
 			if (auxMb->getTotalBlockSize() == this->statisticsTable.at(i).value) {
 				this->removeBlock(auxMb, this->freeList);
 
+				this->quickfeetFreeBlocksList.at(i).available += auxMb->getTotalBlockSize();
+				this->quickfeetFreeBlocksList.at(i).len++;
+
 				if (this->quickfeetFreeBlocksList.at(i).head == nullptr) {
 
 					this->quickfeetFreeBlocksList.at(i).head = auxMb;
@@ -328,27 +328,20 @@ void MemoryManager::createQuickfeetBlock() {
 					this->quickfeetFreeBlocksList.at(i).tail->setNextFreeBlock(auxMb);
 					this->quickfeetFreeBlocksList.at(i).tail = auxMb;
 				}
-
 				break;
 			}
-	
 		}
-
 		auxMb = nextAuxMb;
 	}
-
-
-
 }
 
-void MemoryManager::resetQuickfeetBlock()
-{
+void MemoryManager::resetQuickfeetBlock() {
 	if (this->quickfeetFreeBlocksList.at(0).value == -1) {
 		return;
 	}
 
 	for (int i = 0; i < this->totalAuxListQuickFeet; i++) {
-		MemoryBlock* aux =  this->quickfeetFreeBlocksList.at(i).head;
+		MemoryBlock* aux = this->quickfeetFreeBlocksList.at(i).head;
 
 		while (aux != nullptr) {
 			MemoryBlock* nextAuxMb = aux->getNextFreeBlock();
@@ -372,7 +365,7 @@ void MemoryManager::resetQuickfeetBlock()
 		nb.len = 0;
 
 		this->quickfeetFreeBlocksList.at(i) = nb;
-		
+
 		//this->freeList.occupiedMemory += this->quickfeetFreeBlocksList.at(i).occupiedMemory;
 	}
 }
@@ -408,4 +401,3 @@ void MemoryManager::printEmptyList(QuickfeetFreeBlocksItem& list) {
 
 	cout << " ]" << endl;
 }
-
