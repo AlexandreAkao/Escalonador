@@ -1,4 +1,12 @@
-﻿  MemoryManager.cpp
-F:\Projetos\Faculdade\Escalonador\escalonador2\MemoryManager.cpp(111,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+﻿  CPU.cpp
+  Core.cpp
+  Kernel.cpp
+  MemoryManager.cpp
+F:\Projetos\Faculdade\Escalonador\escalonador2\MemoryManager.cpp(112,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Process.cpp
+  Scheduler.cpp
+  Simulador.cpp
+F:\Projetos\Faculdade\Escalonador\escalonador2\Simulador.cpp(86,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Generating Code...
 F:\Projetos\Faculdade\Escalonador\escalonador2\MemoryManager.cpp(43): warning C4172: returning address of local variable or temporary: qfb
   escalonador2.vcxproj -> F:\Projetos\Faculdade\Escalonador\x64\Debug\escalonador2.exe

@@ -13,7 +13,7 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	this->availableMemory = totalMemory;
 	this->occupiedMemory = 0;
 	this->memoryStaticOverhead = 16;
-	this->totalAuxListQuickFeet = 4;
+	this->totalAuxListQuickFeet = 2;
 
 	this->alg = alg;
 
@@ -28,7 +28,7 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	if (alg == MemoryManager::Algorithms::quick_fit) {
 		for (int i = 0; i < this->totalAuxListQuickFeet; i++) {
 			QuickfeetFreeBlocksItem nb;
-			nb.value = -1;
+			nb.value = -2;
 			nb.len = 0;
 			nb.head = nullptr;
 			nb.tail = nullptr;
@@ -64,7 +64,8 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem &li
 	int bestBlockValue = numeric_limits<int>::max();
 
 	if (this->alg == MemoryManager::Algorithms::quick_fit) {
-		this->minimumAmountCallsCounter ++;
+		this->minimumAmountCallsCounter++;
+		cout << minimumAmountCallsCounter << "----------------------" << endl;
 	}
 
 	while (mbAux != nullptr) {
@@ -202,7 +203,7 @@ void MemoryManager::free(MemoryBlock* block) {
 	if (this->alg == MemoryManager::Algorithms::first_fit || this->alg == MemoryManager::Algorithms::best_fit) {
 		this->free(block, this->freeList);
 	} else {
-		QuickfeetFreeBlocksItem& list = this->findFreeBlock(block->getTotalBlockSize());
+		QuickfeetFreeBlocksItem list = this->findFreeBlock(block->getTotalBlockSize());
 
 		this->free(block, list);
 	}
@@ -295,6 +296,7 @@ void MemoryManager::createQuickfeetBlock() {
 	MemoryBlock* auxMb = this->freeList.head;
 
 	for (int i = 0; i < this->totalAuxListQuickFeet; i++) {
+		this->quickfeetFreeBlocksList.at(i).available = 0;
 		this->quickfeetFreeBlocksList.at(i).value = this->statisticsTable.at(i).value;
 	}
 
@@ -357,7 +359,7 @@ void MemoryManager::resetQuickfeetBlock() {
 
 
 		QuickfeetFreeBlocksItem nb;
-		nb.value = -1;
+		nb.value = -2;
 		nb.len = 0;
 		nb.head = nullptr;
 		nb.tail = nullptr;
@@ -398,14 +400,13 @@ MemoryManager::Algorithms MemoryManager::getAlg() {
 
 void MemoryManager::verifyAndCreateAuxLists()
 {
-	if (this->minimumAmountCallsCounter != this->minimumAmountCalls) {
+	if (this->minimumAmountCallsCounter < this->minimumAmountCalls) {
 		return;
 	}
 	else {
 		this->resetQuickfeetBlock();
 		this->minimumAmountCallsCounter = 0;
 		this->createQuickfeetBlock();
-
 	}
 }
 
