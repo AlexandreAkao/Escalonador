@@ -12,7 +12,7 @@ using namespace std;
 
 class Simulador {
 private:
-	int quantum, processor_cores_number, nmbProcess, minimumAmountCalls, totalMemory;
+	int quantum, processor_cores_number, nmbProcess, minimumAmountCalls, totalMemory, totalAuxListQuickFeet;
 	Scheduler::Algorithms alg;
 	MemoryManager::Algorithms mAlg;
 
@@ -20,7 +20,7 @@ public:
 	int idTraker = 0;
 	Kernel* kernel = NULL;
 
-	Simulador(int quantum, int processor_cores_number, int nmbProcess, Scheduler::Algorithms alg, MemoryManager::Algorithms mAlg, int minimumAmountCalls, int totalMemory) {
+	Simulador(int quantum, int processor_cores_number, int nmbProcess, Scheduler::Algorithms alg, MemoryManager::Algorithms mAlg, int minimumAmountCalls, int totalMemory, int totalAuxListQuickFeet) {
 		this->quantum = quantum;
 		this->processor_cores_number = processor_cores_number;
 		this->nmbProcess = nmbProcess;
@@ -28,6 +28,7 @@ public:
 		this->mAlg = mAlg;
 		this->minimumAmountCalls = minimumAmountCalls;
 		this->totalMemory = totalMemory;
+		this->totalAuxListQuickFeet = totalAuxListQuickFeet;
 	}
 
 	struct processAux {
@@ -46,7 +47,7 @@ public:
 	}
 
 	void run(list<processAux> lista_process) {
-		kernel = new Kernel(quantum, processor_cores_number, alg, mAlg, minimumAmountCalls, totalMemory);
+		kernel = new Kernel(quantum, processor_cores_number, alg, mAlg, minimumAmountCalls, totalMemory, this->totalAuxListQuickFeet);
 		for (processAux aux : lista_process)
 			kernel->create_process(aux.id, aux.lifeTime, aux.state);
 		kernel->run();
@@ -90,8 +91,9 @@ int main() {
 	int processor_cores_number = 2;
 	int nmbProcess = 6;
 	int minimumAmountCalls = 10;
+	int totalAuxListQuickFeet = 3;
 	int totalMemory = 6000;
-	Simulador* simulador = new Simulador(quantum, processor_cores_number, nmbProcess, alg, mAlg, minimumAmountCalls, totalMemory);
+	Simulador* simulador = new Simulador(quantum, processor_cores_number, nmbProcess, alg, mAlg, minimumAmountCalls, totalMemory, totalAuxListQuickFeet);
 
 	simulador->start();
 

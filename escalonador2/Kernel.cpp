@@ -1,8 +1,8 @@
 #include "Kernel.h"
 
-Kernel::Kernel(int quantum, int processor_cores_number, Scheduler::Algorithms algorithm, MemoryManager::Algorithms mAlg, int minimumAmountCalls, int totalMemory) {
+Kernel::Kernel(int quantum, int processor_cores_number, Scheduler::Algorithms algorithm, MemoryManager::Algorithms mAlg, int minimumAmountCalls, int totalMemory, int totalAuxListQuickFeet) {
 	this->cpu = new CPU(processor_cores_number, quantum);
-	this->memoryManger = new MemoryManager(mAlg, totalMemory, minimumAmountCalls);
+	this->memoryManger = new MemoryManager(mAlg, totalMemory, minimumAmountCalls, totalAuxListQuickFeet);
 
 	this->scheduler = new Scheduler(algorithm, processor_cores_number, quantum, cpu, this->memoryManger);
 }
@@ -12,6 +12,9 @@ Kernel::~Kernel() {
 
 void Kernel::run() {
 	thread scheduler_thread(&Scheduler::run, scheduler);
+	thread memory_thread(&MemoryManager::run, memoryManger);
+
+	memory_thread.join();
 	scheduler_thread.join();
 }
 

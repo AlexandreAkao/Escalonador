@@ -11,7 +11,6 @@ Scheduler::Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu, Mem
 void Scheduler::insert_process(Process* newProcess, bool isNew) {	
 	bool wasCreated = true;
 	if (isNew) {
-
 		wasCreated = newProcess->generateRandomMemory(true);
 	}
 	
@@ -30,9 +29,9 @@ void Scheduler::process_core_singlethread() {
 	while (true) {
 		cout << "---------------------------------------------------------------------------------" << endl;
 
-		if (this->memoryManager->getAlg() == MemoryManager::Algorithms::quick_fit) {
+		/*if (this->memoryManager->getAlg() == MemoryManager::Algorithms::quick_fit) {
 			this->memoryManager->verifyAndCreateAuxLists();
-		}
+		}*/
 
 		this->memoryManager->showStatus();
 		cpu->printProcessos();

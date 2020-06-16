@@ -11,7 +11,7 @@ public:
 		first_fit, best_fit, quick_fit
 	};
 	
-	MemoryManager(MemoryManager::Algorithms alg ,int totalMemory, int minimumAmountCalls);
+	MemoryManager(MemoryManager::Algorithms alg ,int totalMemory, int minimumAmountCalls, int totalAuxListQuickFeet);
 	MemoryBlock* malloc(int memoryNeeded);
 	bool checkFreeMemory(int memoryNeeded);
 	void free(MemoryBlock* position);
@@ -19,6 +19,7 @@ public:
 	void showEmptyListsStatus();
 	MemoryManager::Algorithms getAlg();
 	void verifyAndCreateAuxLists();
+	void run();
 
 private:
 	struct QuickfeetFreeBlocksItem {
@@ -47,6 +48,7 @@ private:
 	void checkStatisticsTable(int value);
 	void createQuickfeetBlock();
 	void resetQuickfeetBlock();
+
 
 	vector<MemoryBlockFrequency> statisticsTable;
 	vector<QuickfeetFreeBlocksItem> quickfeetFreeBlocksList;

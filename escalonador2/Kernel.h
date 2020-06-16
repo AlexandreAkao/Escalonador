@@ -12,7 +12,7 @@
 
 class Kernel {
 public:
-	Kernel(int quantum, int processor_cores_number, Scheduler::Algorithms algorithm, MemoryManager::Algorithms mAlg,int minimumAmountCalls, int totalMemory);
+	Kernel(int quantum, int processor_cores_number, Scheduler::Algorithms algorithm, MemoryManager::Algorithms mAlg,int minimumAmountCalls, int totalMemory, int totalAuxListQuickFeet);
 	~Kernel();
 	void run();
 	list<Process*> get_process_control_table();

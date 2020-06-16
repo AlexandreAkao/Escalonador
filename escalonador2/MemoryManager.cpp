@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <limits>
 
-MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int minimumAmountCalls) {
+MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int minimumAmountCalls, int totalAuxListQuickFeet) {
 	this->totalMemory = totalMemory;
 	this->headFreeBlockList = nullptr;
 	this->tailFreeBlockList = nullptr;
@@ -13,7 +13,7 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	this->availableMemory = totalMemory;
 	this->occupiedMemory = 0;
 	this->memoryStaticOverhead = 16;
-	this->totalAuxListQuickFeet = 2;
+	this->totalAuxListQuickFeet = totalAuxListQuickFeet;
 
 	this->alg = alg;
 
@@ -421,7 +421,7 @@ void MemoryManager::showStatus() {
 void MemoryManager::showEmptyListsStatus() {
 	this->printEmptyList(this->freeList);
 	if (alg == MemoryManager::Algorithms::quick_fit) {
-		if (this->quickfeetFreeBlocksList.at(0).value != -1) {
+		if (this->quickfeetFreeBlocksList.at(0).value != -2) {
 			for (QuickfeetFreeBlocksItem list : this->quickfeetFreeBlocksList) {
 				this->printEmptyList(list);
 			}
@@ -442,6 +442,17 @@ void MemoryManager::verifyAndCreateAuxLists()
 		this->resetQuickfeetBlock();
 		this->minimumAmountCallsCounter = 0;
 		this->createQuickfeetBlock();
+	}
+}
+
+void MemoryManager::run()
+{
+	while (true)
+	{
+		if (this->getAlg() == MemoryManager::Algorithms::quick_fit) {
+			this->verifyAndCreateAuxLists();
+		}
+
 	}
 }
 
