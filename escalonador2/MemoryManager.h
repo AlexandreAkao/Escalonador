@@ -41,6 +41,7 @@ private:
 	bool checkFreeMemory(int memoryNeeded, QuickfeetFreeBlocksItem& list);
 	void free(MemoryBlock* position, QuickfeetFreeBlocksItem& list);
 	QuickfeetFreeBlocksItem* findFreeBlock(int qtdNeedes);
+	int metodoDaFe(int qtdNeedes);
 	MemoryBlock* malloc(int memoryNeeded, QuickfeetFreeBlocksItem &list);
 	void removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem& list);
 	void checkStatisticsTable(int value);

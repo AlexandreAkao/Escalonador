@@ -11,6 +11,8 @@ Scheduler::Scheduler(Algorithms algotithm, int cores, int quantum, CPU* cpu, Mem
 void Scheduler::insert_process(Process* newProcess, bool isNew) {	
 	bool wasCreated = true;
 	if (isNew) {
+		cout << "****************************NEWPROCESS**********************" << endl;
+
 		wasCreated = newProcess->generateRandomMemory(true);
 	}
 	
