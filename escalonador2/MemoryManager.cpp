@@ -78,8 +78,6 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem &li
 	}
 
 	while (mbAux != nullptr) {
-		cout << "****************************GETMALLOC1**********************" << endl;
-
 		if (mbAux->getTotalBlockSize() >= memoryNeeded) {
 			if (this->alg == MemoryManager::Algorithms::first_fit || this->alg == MemoryManager::Algorithms::quick_fit) {
 				this->calculateAvaibleMemory(lista);
@@ -96,8 +94,6 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem &li
 				return mbAux;
 				
 			} else if (this->alg == MemoryManager::Algorithms::best_fit) {
-				cout << "****************************GETMALLOC2**********************" << endl;
-
 				int difference = mbAux->getTotalBlockSize() - memoryNeeded;
 				if(difference <= bestBlockValue) {
 					bestBlock = mbAux;
@@ -215,7 +211,6 @@ void MemoryManager::free(MemoryBlock* block, QuickfeetFreeBlocksItem &list) {
 		list.head = block;
 		list.tail = block;
 	} else {
-		cout << "****************************SETFREE**********************" << endl;
 		list.tail->setNextFreeBlock(block);
 		list.tail = block;
 	}

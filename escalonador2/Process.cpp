@@ -71,9 +71,10 @@ int Process::getTotalMemory() {
 }
 
 bool Process::generateRandomMemory(bool isStatic) {
-	int memoryValue = rand() % 20 + 1; //rand() % 4096 + 1;
+	int memoryValue = rand() % 4096 + 1;
 	
 	if (!isStatic && rand() % 100 < this->dinamicProb) {
+		//cout << "*******************" << memoryValue << "*******************" << endl;
 		return true;
 	}
 	
@@ -81,6 +82,8 @@ bool Process::generateRandomMemory(bool isStatic) {
 		MemoryBlock* newBlock = this->memoryManager->malloc(memoryValue);
 		this->setMemoryPointers(newBlock);
 		this->totalMemory += memoryValue;
+		//cout << "*******************" << memoryValue << "*******************" << endl;
+
 		return true;
 	} else {
 		return false;
