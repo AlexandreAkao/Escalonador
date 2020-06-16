@@ -37,14 +37,14 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 	}
 }
 
-MemoryManager::QuickfeetFreeBlocksItem& MemoryManager::findFreeBlock(int qtdNeeded) {
+MemoryManager::QuickfeetFreeBlocksItem* MemoryManager::findFreeBlock(int qtdNeeded) {
 	for (QuickfeetFreeBlocksItem qfb : this->quickfeetFreeBlocksList) {
 		if (qtdNeeded == qfb.value) {
-			return qfb;
+			return &qfb;
 		}
 	}
 
-	return this->freeList;
+	return &this->freeList;
 }
 
 MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem &lista) {
@@ -123,9 +123,9 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded) {
 	}
 	else {
 
-		QuickfeetFreeBlocksItem& list = this->findFreeBlock(memoryNeeded);
-		if (list.len > 0) {
-			return this->malloc(memoryNeeded, list);
+		QuickfeetFreeBlocksItem* list = this->findFreeBlock(memoryNeeded);
+		if (list->len > 0) {
+			return this->malloc(memoryNeeded, *list);
 		}
 		else {
 			return this->malloc(memoryNeeded, this->freeList);
@@ -161,12 +161,12 @@ bool MemoryManager::checkFreeMemory(int memoryNeeded) {
 		return this->checkFreeMemory(memoryNeeded, this->freeList);
 	}
 	else {
-		QuickfeetFreeBlocksItem& list = this->findFreeBlock(memoryNeeded);
-		if (list.value == -1) {
-			return this->checkFreeMemory(memoryNeeded, list);
+		QuickfeetFreeBlocksItem* list = this->findFreeBlock(memoryNeeded);
+		if (list->value == -1) {
+			return this->checkFreeMemory(memoryNeeded, *list);
 		}
 		else {
-			bool result = this->checkFreeMemory(memoryNeeded, list);
+			bool result = this->checkFreeMemory(memoryNeeded, *list);
 			if (!result) {
 				return this->checkFreeMemory(memoryNeeded, this->freeList);
 			}
@@ -203,9 +203,9 @@ void MemoryManager::free(MemoryBlock* block) {
 	if (this->alg == MemoryManager::Algorithms::first_fit || this->alg == MemoryManager::Algorithms::best_fit) {
 		this->free(block, this->freeList);
 	} else {
-		QuickfeetFreeBlocksItem list = this->findFreeBlock(block->getTotalBlockSize());
-
-		this->free(block, list);
+		QuickfeetFreeBlocksItem* list = this->findFreeBlock(block->getTotalBlockSize());
+		
+		this->free(block, *list);
 	}
 }
 
@@ -386,10 +386,11 @@ void MemoryManager::showStatus() {
 
 void MemoryManager::showEmptyListsStatus() {
 	this->printEmptyList(this->freeList);
-	if (this->quickfeetFreeBlocksList.at(0).value != -1) {
-		for (QuickfeetFreeBlocksItem list : this->quickfeetFreeBlocksList) {
-			this->printEmptyList(list);
-
+	if (alg == MemoryManager::Algorithms::quick_fit) {
+		if (this->quickfeetFreeBlocksList.at(0).value != -1) {
+			for (QuickfeetFreeBlocksItem list : this->quickfeetFreeBlocksList) {
+				this->printEmptyList(list);
+			}
 		}
 	}
 }
