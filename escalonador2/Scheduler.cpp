@@ -21,6 +21,7 @@ void Scheduler::insert_process(Process* newProcess, bool isNew) {
 			ready_queue.push_back(newProcess);
 		}
 	} else {
+		cout << "Static Abort: " << newProcess->get_process_id() << endl;
 		newProcess->abortProcess();
 	}
 }
@@ -37,7 +38,7 @@ void Scheduler::process_core_singlethread() {
 		cpu->printProcessos();
 		printReadyQueue();
 
-		this_thread::sleep_for(chrono::seconds(1));
+		this_thread::sleep_for(chrono::seconds(3));
 
 		for (int core_position = 0; core_position < qtd_cores; core_position++) {
 			if (!cpu->coreIsEmpty(core_position)) {
@@ -151,7 +152,7 @@ void Scheduler::deschedule_process(int position, bool wasTerminated) {
 			process->set_state(Process::States::terminated);
 		}
 	} else {
-		cout << "Abort: " << process->get_process_id() << endl;
+		cout << "Dinamic abort: " << process->get_process_id() << endl;
 
  		process->abortProcess();
 	}

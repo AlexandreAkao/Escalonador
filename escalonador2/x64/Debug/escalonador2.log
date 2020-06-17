@@ -2,7 +2,7 @@
   Core.cpp
   Kernel.cpp
   MemoryManager.cpp
-D:\Codes\c++\Escalonador\escalonador2\MemoryManager.cpp(120,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\Codes\c++\Escalonador\escalonador2\MemoryManager.cpp(106,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   Process.cpp
   Scheduler.cpp
   Simulador.cpp

@@ -27,18 +27,18 @@ MemoryManager::MemoryManager(MemoryManager::Algorithms alg, int totalMemory,int 
 
 	if (alg == MemoryManager::Algorithms::quick_fit) {
 		for (int i = 0; i < this->totalAuxListQuickFeet; i++) {
-			QuickfeetFreeBlocksItem nb;
+			QuickFitFreeBlocksItem nb;
 			nb.value = -2;
 			nb.len = 0;
 			nb.head = nullptr;
 			nb.tail = nullptr;
-			this->quickfeetFreeBlocksList.push_back(nb);
+			this->quickfeetFitBlocksList.push_back(nb);
 		}
 	}
 }
 
-MemoryManager::QuickfeetFreeBlocksItem* MemoryManager::findFreeBlock(int qtdNeeded) {
-	for (QuickfeetFreeBlocksItem qfb : this->quickfeetFreeBlocksList) {
+MemoryManager::QuickFitFreeBlocksItem* MemoryManager::findFreeBlock(int qtdNeeded) {
+	for (QuickFitFreeBlocksItem qfb : this->quickfeetFitBlocksList) {
 		if (qtdNeeded == qfb.value) {
 			return &qfb;
 		}
@@ -48,8 +48,8 @@ MemoryManager::QuickfeetFreeBlocksItem* MemoryManager::findFreeBlock(int qtdNeed
 }
 
 int MemoryManager::metodoDaFe(int qtdNeedes) {
-	for (int i = 0; i < this->quickfeetFreeBlocksList.size(); i++) {
-		if (qtdNeedes == this->quickfeetFreeBlocksList.at(i).value) {
+	for (int i = 0; i < this->quickfeetFitBlocksList.size(); i++) {
+		if (qtdNeedes == this->quickfeetFitBlocksList.at(i).value) {
 			return i;
 		}
 	}
@@ -57,17 +57,9 @@ int MemoryManager::metodoDaFe(int qtdNeedes) {
 	return -1;
 }
 
-MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem &lista) {
+MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickFitFreeBlocksItem &lista) {
 	this->checkStatisticsTable(memoryNeeded); //Fase de teste
 	MemoryBlock* mbAux = lista.head;
-	//if (item.value != QuickfeetFreeBlocksItem().value) {
-	//	mbAux = item.head;
-	//}
-	//else
-	//{
-	//	mbAux = this->headFreeBlockList;
-	//}
-	//this->occupiedMemory += memoryNeeded;
 
 	lista.occupiedMemory +=  memoryNeeded;
 	MemoryBlock* bestBlock = nullptr;
@@ -82,13 +74,7 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded, QuickfeetFreeBlocksItem &li
 			if (this->alg == MemoryManager::Algorithms::first_fit || this->alg == MemoryManager::Algorithms::quick_fit) {
 				this->calculateAvaibleMemory(lista);
 				this->removeBlock(mbAux, lista);
-			/*	if (lista.value != QuickfeetFreeBlocksItem().value) {
-					lista.len--;
-				}
-				else
-				{
-					this->freeMemoryLen--;
-				}*/
+
 				lista.len--;
 				mbAux->setOccupedSize(memoryNeeded);
 				return mbAux;
@@ -140,7 +126,7 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded) {
 		}*/
 		int fe = this->metodoDaFe(memoryNeeded);
 		if (fe != -1) {
-			return this->malloc(memoryNeeded, this->quickfeetFreeBlocksList.at(fe));
+			return this->malloc(memoryNeeded, this->quickfeetFitBlocksList.at(fe));
 		} else {
 			return this->malloc(memoryNeeded, this->freeList);
 
@@ -148,7 +134,7 @@ MemoryBlock* MemoryManager::malloc(int memoryNeeded) {
 	}
 }
 
-bool MemoryManager::checkFreeMemory(int memoryNeeded, QuickfeetFreeBlocksItem &list) {
+bool MemoryManager::checkFreeMemory(int memoryNeeded, QuickFitFreeBlocksItem &list) {
 	if (list.available < memoryNeeded)
 		return false;
 	else {
@@ -185,7 +171,7 @@ bool MemoryManager::checkFreeMemory(int memoryNeeded) {
 			return this->checkFreeMemory(memoryNeeded, this->freeList);
 		}
 		else {
-			bool result = this->checkFreeMemory(memoryNeeded, this->quickfeetFreeBlocksList.at(fe));
+			bool result = this->checkFreeMemory(memoryNeeded, this->quickfeetFitBlocksList.at(fe));
 			if (!result) {
 				return this->checkFreeMemory(memoryNeeded, this->freeList);
 			}
@@ -197,7 +183,7 @@ bool MemoryManager::checkFreeMemory(int memoryNeeded) {
 	}
  }
 
-void MemoryManager::free(MemoryBlock* block, QuickfeetFreeBlocksItem &list) {
+void MemoryManager::free(MemoryBlock* block, QuickFitFreeBlocksItem &list) {
 
  	int occupedSize = block->getOccupedSize();
 	//this->occupiedMemory -= occupedSize;
@@ -228,7 +214,7 @@ void MemoryManager::free(MemoryBlock* block) {
 		int fe = this->metodoDaFe(block->getTotalBlockSize());
 
 		if (fe != -1) {
-			return this->free(block, this->quickfeetFreeBlocksList.at(fe));
+			return this->free(block, this->quickfeetFitBlocksList.at(fe));
 		} else {
 			return this->free(block, this->freeList);
 
@@ -237,12 +223,12 @@ void MemoryManager::free(MemoryBlock* block) {
 	}
 }
 
-void MemoryManager::calculateAvaibleMemory(QuickfeetFreeBlocksItem &list) {
+void MemoryManager::calculateAvaibleMemory(QuickFitFreeBlocksItem &list) {
 	list.available = this->totalMemory - this->memoryOverhead - list.occupiedMemory;
 	//this->availableMemory = this->totalMemory - this->memoryOverhead - this->occupiedMemory;
 }
 
-void MemoryManager::removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem &item) {
+void MemoryManager::removeBlock(MemoryBlock* mb, QuickFitFreeBlocksItem &item) {
 
 	MemoryBlock* head = nullptr;
 	MemoryBlock* tail = nullptr;
@@ -326,8 +312,8 @@ void MemoryManager::createQuickfeetBlock() {
 	MemoryBlock* auxMb = this->freeList.head;
 
 	for (int i = 0; i < this->totalAuxListQuickFeet; i++) {
-		this->quickfeetFreeBlocksList.at(i).available = 0;
-		this->quickfeetFreeBlocksList.at(i).value = this->statisticsTable.at(i).value;
+		this->quickfeetFitBlocksList.at(i).available = 0;
+		this->quickfeetFitBlocksList.at(i).value = this->statisticsTable.at(i).value;
 	}
 
 	while (auxMb != nullptr) {
@@ -338,21 +324,21 @@ void MemoryManager::createQuickfeetBlock() {
 			if (auxMb->getTotalBlockSize() == this->statisticsTable.at(i).value) {
 				this->removeBlock(auxMb, this->freeList);
 
-				this->quickfeetFreeBlocksList.at(i).available += auxMb->getTotalBlockSize();
+				this->quickfeetFitBlocksList.at(i).available += auxMb->getTotalBlockSize();
 
 				this->freeList.available -= auxMb->getTotalBlockSize();
-				this->quickfeetFreeBlocksList.at(i).len++;
+				this->quickfeetFitBlocksList.at(i).len++;
 				this->freeList.len --;
 
-				if (this->quickfeetFreeBlocksList.at(i).head == nullptr) {
+				if (this->quickfeetFitBlocksList.at(i).head == nullptr) {
 
-					this->quickfeetFreeBlocksList.at(i).head = auxMb;
-					this->quickfeetFreeBlocksList.at(i).tail = auxMb;
+					this->quickfeetFitBlocksList.at(i).head = auxMb;
+					this->quickfeetFitBlocksList.at(i).tail = auxMb;
 				}
 				else {
 
-					this->quickfeetFreeBlocksList.at(i).tail->setNextFreeBlock(auxMb);
-					this->quickfeetFreeBlocksList.at(i).tail = auxMb;
+					this->quickfeetFitBlocksList.at(i).tail->setNextFreeBlock(auxMb);
+					this->quickfeetFitBlocksList.at(i).tail = auxMb;
 				}
 				break;
 			}
@@ -363,12 +349,12 @@ void MemoryManager::createQuickfeetBlock() {
 
 void MemoryManager::resetQuickfeetBlock() {
 
-	if (this->quickfeetFreeBlocksList.at(0).value == -1) {
+	if (this->quickfeetFitBlocksList.at(0).value == -1) {
 		return;
 	}
 
 	for (int i = 0; i < this->totalAuxListQuickFeet; i++) {
-		MemoryBlock* aux = this->quickfeetFreeBlocksList.at(i).head;
+		MemoryBlock* aux = this->quickfeetFitBlocksList.at(i).head;
 
 		while (aux != nullptr) {
 			MemoryBlock* nextAuxMb = aux->getNextFreeBlock();
@@ -376,7 +362,7 @@ void MemoryManager::resetQuickfeetBlock() {
 			this->freeList.available += aux->getTotalBlockSize();
 			this->freeList.len++;
 
-			this->removeBlock(aux, this->quickfeetFreeBlocksList.at(i));
+			this->removeBlock(aux, this->quickfeetFitBlocksList.at(i));
 
 			if (this->freeList.head == nullptr) {
 				this->freeList.head = aux;
@@ -392,13 +378,13 @@ void MemoryManager::resetQuickfeetBlock() {
 
 
 
-		QuickfeetFreeBlocksItem nb;
+		QuickFitFreeBlocksItem nb;
 		nb.value = -2;
 		nb.len = 0;
 		nb.head = nullptr;
 		nb.tail = nullptr;
 
-		this->quickfeetFreeBlocksList.at(i) = nb;
+		this->quickfeetFitBlocksList.at(i) = nb;
 
 		//this->freeList.occupiedMemory += this->quickfeetFreeBlocksList.at(i).occupiedMemory;
 	}
@@ -408,11 +394,13 @@ void MemoryManager::showStatus() {
 	
 	this->showEmptyListsStatus();
 
-	cout << "Sort: [";
-	for (unsigned i = 0; i < statisticsTable.size(); i++)
-		cout << "{" << statisticsTable.at(i).qtd << "|" << statisticsTable.at(i).value << "}, ";
-	cout << "]" << endl;
+	if (alg == MemoryManager::Algorithms::quick_fit) {
 
+		cout << "Sort: [";
+		for (unsigned i = 0; i < statisticsTable.size(); i++)
+			cout << "{" << statisticsTable.at(i).qtd << "|" << statisticsTable.at(i).value << "}, ";
+		cout << "]" << endl;
+	}
 	cout << "T: " << this->totalMemory << " ,A: " << this->freeList.available << " ,O: " << this->freeList.occupiedMemory << " ,Ov " << this->memoryOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeMemoryLen<< endl;
 
 	//cout << "T: " << this->freeList.total << " ,A: " << this->freeList.available << " ,O: " << this->freeList.occupiedMemory << " ,Ov " << this->memoryOverhead << " ,QtdB " << this->memoryOverhead / this->memoryStaticOverhead << " ,FLen " << this->freeList.len << endl;
@@ -421,8 +409,8 @@ void MemoryManager::showStatus() {
 void MemoryManager::showEmptyListsStatus() {
 	this->printEmptyList(this->freeList);
 	if (alg == MemoryManager::Algorithms::quick_fit) {
-		if (this->quickfeetFreeBlocksList.at(0).value != -2) {
-			for (QuickfeetFreeBlocksItem list : this->quickfeetFreeBlocksList) {
+		if (this->quickfeetFitBlocksList.at(0).value != -2) {
+			for (QuickFitFreeBlocksItem list : this->quickfeetFitBlocksList) {
 				this->printEmptyList(list);
 			}
 		}
@@ -456,7 +444,7 @@ void MemoryManager::run()
 	}
 }
 
-void MemoryManager::printEmptyList(QuickfeetFreeBlocksItem& list) {
+void MemoryManager::printEmptyList(QuickFitFreeBlocksItem& list) {
 	MemoryBlock* aux = list.head;
 	cout << "Lv: " << list.value << " , Sz: " << list.len <<" [ ";
 	while (aux != nullptr) {

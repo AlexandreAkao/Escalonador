@@ -71,8 +71,8 @@ int Process::getTotalMemory() {
 }
 
 bool Process::generateRandomMemory(bool isStatic) {
-	//int memoryValue = rand() % 4096 + 1;
-	int memoryValue = rand() % 20 + 1;
+	int memoryValue = rand() % 4096 + 1;
+	//int memoryValue = rand() % 20 + 1;
 
 	if (!isStatic && rand() % 100 < this->dinamicProb) {
 		//cout << "*******************" << memoryValue << "*******************" << endl;

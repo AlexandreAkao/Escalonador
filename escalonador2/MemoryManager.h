@@ -22,7 +22,7 @@ public:
 	void run();
 
 private:
-	struct QuickfeetFreeBlocksItem {
+	struct QuickFitFreeBlocksItem {
 		int value;
 		int len;
 		int available;
@@ -37,21 +37,21 @@ private:
 		int qtd;
 	};
 
-	void printEmptyList(QuickfeetFreeBlocksItem& list);
-	void calculateAvaibleMemory(QuickfeetFreeBlocksItem& list);
-	bool checkFreeMemory(int memoryNeeded, QuickfeetFreeBlocksItem& list);
-	void free(MemoryBlock* position, QuickfeetFreeBlocksItem& list);
-	QuickfeetFreeBlocksItem* findFreeBlock(int qtdNeedes);
+	void printEmptyList(QuickFitFreeBlocksItem& list);
+	void calculateAvaibleMemory(QuickFitFreeBlocksItem& list);
+	bool checkFreeMemory(int memoryNeeded, QuickFitFreeBlocksItem& list);
+	void free(MemoryBlock* position, QuickFitFreeBlocksItem& list);
+	QuickFitFreeBlocksItem* findFreeBlock(int qtdNeedes);
 	int metodoDaFe(int qtdNeedes);
-	MemoryBlock* malloc(int memoryNeeded, QuickfeetFreeBlocksItem &list);
-	void removeBlock(MemoryBlock* mb, QuickfeetFreeBlocksItem& list);
+	MemoryBlock* malloc(int memoryNeeded, QuickFitFreeBlocksItem &list);
+	void removeBlock(MemoryBlock* mb, QuickFitFreeBlocksItem& list);
 	void checkStatisticsTable(int value);
 	void createQuickfeetBlock();
 	void resetQuickfeetBlock();
 
 
 	vector<MemoryBlockFrequency> statisticsTable;
-	vector<QuickfeetFreeBlocksItem> quickfeetFreeBlocksList;
+	vector<QuickFitFreeBlocksItem> quickfeetFitBlocksList;
 	vector<MemoryBlock*> memory;
 	MemoryBlock* headFreeBlockList;
 	MemoryBlock* tailFreeBlockList;
@@ -66,7 +66,7 @@ private:
 	int freeMemoryLen = 0;
 	int totalAuxListQuickFeet;
 
-	QuickfeetFreeBlocksItem freeList;
+	QuickFitFreeBlocksItem freeList;
 	MemoryManager::Algorithms alg;
 };
 

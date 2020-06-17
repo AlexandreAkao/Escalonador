@@ -86,10 +86,10 @@ public:
 int main() {
 	srand(time(NULL));
  	Scheduler::Algorithms alg = Scheduler::Algorithms::sjf;
-	MemoryManager::Algorithms mAlg = MemoryManager::Algorithms::quick_fit;
+	MemoryManager::Algorithms mAlg = MemoryManager::Algorithms::best_fit;
 	int quantum = 2;
 	int processor_cores_number = 2;
-	int nmbProcess = 6;
+	int nmbProcess = 10;
 	int minimumAmountCalls = 10;
 	int totalAuxListQuickFeet = 3;
 	int totalMemory = 6000;
